@@ -42,3 +42,5 @@ impl Map {
         }
     }
 }
+
+pub type MapModifier = Box<dyn FnMut(&mut Map)>;
