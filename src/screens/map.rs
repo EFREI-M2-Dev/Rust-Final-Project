@@ -2,16 +2,16 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::prelude::Alignment;
 use crate::map::generator::generate_map;
 use crate::map::modifier::add_random_elements;
-use crate::map::TileType;
 use ratatui::text::{Line, Span};
-use ratatui::style::{Color, Style};
+use ratatui::style::{Style};
+use crate::map::{Map as BaseMap, TileType};
+
 
 #[derive(Debug)]
 pub struct Map {
     pub exit: bool,
-    pub grid: Vec<Vec<TileType>>,
+    pub base_map: BaseMap,
 }
-
 
 impl Map {
     pub fn new() -> Self {
@@ -27,22 +27,17 @@ impl Map {
 
         Self {
             exit: false,
-            grid: generated_map.grid,
+            base_map: generated_map,
         }
     }
 
     pub fn draw(&self, frame: &mut ratatui::Frame) {
         let mut map_lines = Vec::new();
-        for row in &self.grid {
+        for row in &self.base_map.grid {
             let mut line = Line::default();
             for tile in row {
-                let (ch, color) = match tile {
-                    TileType::Empty => (' ', Color::Reset),
-                    TileType::Mountain => ('^', Color::Green),
-                    TileType::Mineral => ('M', Color::Yellow),
-                    TileType::Water => ('~', Color::Blue),
-                    TileType::Sand => ('.', Color::Rgb(194, 178, 128)),
-                };
+                let ch = tile.to_char();
+                let color = tile.to_color();
                 line.spans.push(Span::styled(ch.to_string(), Style::default().fg(color)));
             }
             map_lines.push(line);

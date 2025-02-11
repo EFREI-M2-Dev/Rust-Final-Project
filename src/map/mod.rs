@@ -1,3 +1,5 @@
+use ratatui::style::Color;
+
 pub mod generator;
 pub mod modifier;
 
@@ -20,8 +22,19 @@ impl TileType {
             TileType::Sand => '.',
         }
     }
+
+    pub fn to_color(&self) -> Color {
+        match self {
+            TileType::Empty => Color::Reset,
+            TileType::Mountain => Color::Rgb(156, 81, 23),
+            TileType::Mineral => Color::Yellow,
+            TileType::Water => Color::Blue,
+            TileType::Sand => Color::Rgb(194, 178, 128),
+        }
+    }
 }
 
+#[derive(Debug)]
 pub struct Map {
     pub width: usize,
     pub height: usize,
