@@ -1,9 +1,11 @@
 use crate::robot::traits::Robot;
+use crate::module::traits::Module;
 
 pub struct ConstructorRobot {
     name: String,
     battery: f64,
     position: (f64, f64),
+    modules: Vec<Box<dyn Module>>,
 }
 
 impl ConstructorRobot {
@@ -12,6 +14,7 @@ impl ConstructorRobot {
             name: name.to_string(),
             battery: battery_capacity,
             position: (0.0, 0.0),
+            modules: Vec::new(),
         }
     }
 }
@@ -45,8 +48,26 @@ impl Robot for ConstructorRobot {
         self.position = (x, y);
     }
 
-    fn modules(&self) -> Vec<String> {
-        vec!["Boîte à outils".to_string()]
+    fn robot_type(&self) -> &str {
+        "ConstructorRobot"
+    }
+
+    fn modules(&self) -> &Vec<Box<dyn Module>> {
+        &self.modules
+    }
+
+    fn add_module(&mut self, module: Box<dyn Module>) {
+        if module.compatible_robot() == self.robot_type() {
+            println!("✅ {} ajoute le module {}", self.name, module.name());
+            self.modules.push(module);
+        } else {
+            println!("❌ Impossible d'ajouter le module {} à {}, incompatibilité !", module.name(), self.name);
+        }
+    }
+
+    fn remove_module(&mut self, module_name: &str) {
+        self.modules.retain(|m| m.name() != module_name);
+        println!("🗑️ {} a retiré le module {}", self.name, module_name);
     }
 
     fn perform_task(&mut self) {
