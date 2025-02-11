@@ -36,4 +36,8 @@ impl Counter {
             _ => {}
         }
     }
+
+    pub fn should_exit(&self) -> bool {
+        self.exit
+    }
 }

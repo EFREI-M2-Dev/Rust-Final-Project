@@ -1,20 +1,19 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{
-    layout::{Constraint, Direction, Layout},
-    style::Stylize,
-    symbols::border,
-    text::{Line, Text},
-    widgets::{Block, Paragraph},
-};
+use ratatui::{text::Line, widgets::Paragraph, style::Stylize};
+use ratatui::layout::{Constraint, Direction, Layout};
+use ratatui::symbols::border;
+use ratatui::text::Text;
+use ratatui::widgets::Block;
 
 #[derive(Debug)]
-pub struct Menu {
+pub struct Home {
     pub exit: bool,
     options: Vec<&'static str>,
     selected_index: usize,
 }
 
-impl Menu {
+impl Home {
+
     pub fn new() -> Self {
         Self {
             exit: false,
@@ -88,5 +87,9 @@ impl Menu {
             _ => {}
         }
         None
+    }
+
+    pub fn should_exit(&self) -> bool {
+        self.exit
     }
 }
