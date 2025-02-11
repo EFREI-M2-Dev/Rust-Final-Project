@@ -1,5 +1,5 @@
-mod menu;
-mod counter;
+mod screens;
+mod map;
 
 use crossterm::event::{self, Event, KeyEventKind};
 use ratatui::{DefaultTerminal, Frame};
@@ -19,8 +19,8 @@ pub struct App {
 
 #[derive(Debug)]
 enum AppState {
-    Menu(menu::Menu),
-    Counter(counter::Counter),
+    Home(screens::home::Home),
+    Map(screens::map::Map),
 }
 
 impl Default for App {
@@ -32,7 +32,7 @@ impl Default for App {
 impl App {
     pub fn new() -> Self {
         Self {
-            state: AppState::Menu(menu::Menu::new()),
+            state: AppState::Home(screens::home::Home::new()),
         }
     }
 
@@ -45,14 +45,16 @@ impl App {
     }
 
     fn should_exit(&self) -> bool {
-        matches!(self.state, AppState::Counter(counter::Counter { exit: true, .. })) ||
-            matches!(self.state, AppState::Menu(menu::Menu { exit: true, .. }))
+        match &self.state {
+            AppState::Home(home) => home.should_exit(),
+            AppState::Map(map) => map.should_exit(),
+        }
     }
 
     fn draw(&self, frame: &mut Frame) {
         match &self.state {
-            AppState::Menu(menu) => menu.draw(frame),
-            AppState::Counter(counter) => counter.draw(frame),
+            AppState::Home(home) => home.draw(frame),
+            AppState::Map(map) => map.draw(frame),
         }
     }
 
@@ -60,12 +62,15 @@ impl App {
         match event::read()? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 match &mut self.state {
-                    AppState::Menu(menu) => {
-                        if let Some(selection) = menu.handle_key_event(key_event) {
-                            self.state = AppState::Counter(counter::Counter::new(selection));
+                    AppState::Home(home) => {
+                        if let Some(selection) = home.handle_key_event(key_event) {
+                            match selection {
+                                "Nouvelle partie" => self.state = AppState::Map(screens::map::Map::new()),
+                                _ => {}
+                            }
                         }
                     }
-                    AppState::Counter(counter) => counter.handle_key_event(key_event),
+                    AppState::Map(map) => map.handle_key_event(key_event),
                 }
             }
             _ => {}

@@ -1,24 +1,23 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{
-    layout::{Constraint, Direction, Layout},
-    style::Stylize,
-    symbols::border,
-    text::{Line, Text},
-    widgets::{Block, Paragraph},
-};
+use ratatui::{text::Line, widgets::Paragraph, style::Stylize};
+use ratatui::layout::{Constraint, Direction, Layout};
+use ratatui::symbols::border;
+use ratatui::text::Text;
+use ratatui::widgets::Block;
 
 #[derive(Debug)]
-pub struct Menu {
+pub struct Home {
     pub exit: bool,
     options: Vec<&'static str>,
     selected_index: usize,
 }
 
-impl Menu {
+impl Home {
+
     pub fn new() -> Self {
         Self {
             exit: false,
-            options: vec!["Lune", "Astéroïde", "Planète"],
+            options: vec!["Nouvelle partie", "Configuration", "A propos"],
             selected_index: 0,
         }
     }
@@ -40,9 +39,12 @@ impl Menu {
         frame.render_widget(border_block, area);
 
         let title = Line::from(" Bienvenue sur EREEA ").bold();
+
         let instructions = Line::from(" Esc pour quitter ".red());
 
-        let block = Block::bordered().title(title.centered()).title_bottom(instructions.centered());
+        let block = Block::bordered()
+            .title(title.centered())
+            .title_bottom(instructions.centered());
         frame.render_widget(block, frame.area());
 
         let description = Paragraph::new(Text::from(vec![
@@ -88,5 +90,9 @@ impl Menu {
             _ => {}
         }
         None
+    }
+
+    pub fn should_exit(&self) -> bool {
+        self.exit
     }
 }
