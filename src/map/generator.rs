@@ -3,10 +3,10 @@ use super::{Map, TileType, MapModifier};
 
 const SCALE: f64 = 0.1;
 const THRESHOLDS: [(TileType, f64); 4] = [
-    (TileType::Water, -0.5),
-    (TileType::Sand, -0.2),
+    (TileType::Water, -0.2),
+    (TileType::Sand, -0.1),
     (TileType::Empty, 0.2),
-    (TileType::Mountain, 1.0),
+    (TileType::Mountain, 0.9),
 ];
 
 pub fn generate_base_map(width: usize, height: usize, seed: u32) -> Map {
@@ -16,6 +16,7 @@ pub fn generate_base_map(width: usize, height: usize, seed: u32) -> Map {
     for y in 0..height {
         for x in 0..width {
             let noise_value = perlin.get([x as f64 * SCALE, y as f64 * SCALE]);
+            let noise_value = noise_value * 0.3;
 
             let mut tile_type = TileType::Mountain;
             for (tile, threshold) in THRESHOLDS {
