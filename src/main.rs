@@ -1,4 +1,5 @@
 mod screens;
+mod map;
 
 use crossterm::event::{self, Event, KeyEventKind};
 use ratatui::{DefaultTerminal, Frame};
@@ -19,7 +20,7 @@ pub struct App {
 #[derive(Debug)]
 enum AppState {
     Home(screens::home::Home),
-    Counter(screens::counter::Counter),
+    Map(screens::map::Map),
 }
 
 impl Default for App {
@@ -46,14 +47,14 @@ impl App {
     fn should_exit(&self) -> bool {
         match &self.state {
             AppState::Home(home) => home.should_exit(),
-            AppState::Counter(counter) => counter.should_exit(),
+            AppState::Map(map) => map.should_exit(),
         }
     }
 
     fn draw(&self, frame: &mut Frame) {
         match &self.state {
             AppState::Home(home) => home.draw(frame),
-            AppState::Counter(counter) => counter.draw(frame),
+            AppState::Map(map) => map.draw(frame),
         }
     }
 
@@ -63,10 +64,13 @@ impl App {
                 match &mut self.state {
                     AppState::Home(home) => {
                         if let Some(selection) = home.handle_key_event(key_event) {
-                            self.state = AppState::Counter(screens::counter::Counter::new(selection));
+                            match selection {
+                                "Nouvelle partie" => self.state = AppState::Map(screens::map::Map::new()),
+                                _ => {}
+                            }
                         }
                     }
-                    AppState::Counter(counter) => counter.handle_key_event(key_event),
+                    AppState::Map(map) => map.handle_key_event(key_event),
                 }
             }
             _ => {}

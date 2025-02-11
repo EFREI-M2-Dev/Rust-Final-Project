@@ -17,7 +17,7 @@ impl Home {
     pub fn new() -> Self {
         Self {
             exit: false,
-            options: vec!["Lune", "Astéroïde", "Planète"],
+            options: vec!["Nouvelle partie", "Configuration", "A propos"],
             selected_index: 0,
         }
     }
@@ -39,9 +39,12 @@ impl Home {
         frame.render_widget(border_block, area);
 
         let title = Line::from(" Bienvenue sur EREEA ").bold();
+
         let instructions = Line::from(" Esc pour quitter ".red());
 
-        let block = Block::bordered().title(title.centered()).title_bottom(instructions.centered());
+        let block = Block::bordered()
+            .title(title.centered())
+            .title_bottom(instructions.centered());
         frame.render_widget(block, frame.area());
 
         let description = Paragraph::new(Text::from(vec![
