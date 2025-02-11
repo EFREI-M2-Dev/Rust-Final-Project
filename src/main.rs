@@ -5,29 +5,18 @@ use crossterm::event::{self, Event, KeyEventKind};
 use ratatui::{DefaultTerminal, Frame};
 use std::io;
 
-mod robot;
+/* mod robot;
 mod module;
 
 use robot::{CollectorRobot, ExploratorRobot};
-use crate::robot::traits::Robot;
+use crate::robot::traits::Robot; */
 
 
-/* fn main() -> io::Result<()> {
+fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
     let app_result = App::new().run(&mut terminal);
     ratatui::restore();
     app_result
-} */
-
-fn main() {
-    let mut collector = CollectorRobot::new("Collecteur-01", 100.0);
-    let mut explorator = ExploratorRobot::new("Explorateur-01", 120.0);
-
-    collector.perform_task();
-    collector.move_to(10.0, 20.0);
-
-    explorator.perform_task();
-    explorator.move_to(15.0, 25.0);
 }
 
 #[derive(Debug)]
