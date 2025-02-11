@@ -1,4 +1,5 @@
 use ratatui::style::Color;
+use std::collections::HashSet;
 
 pub mod generator;
 pub mod modifier;
@@ -38,29 +39,49 @@ impl TileType {
 }
 
 #[derive(Debug)]
-pub struct Map {
+pub struct BaseMap {
     pub width: usize,
     pub height: usize,
     pub grid: Vec<Vec<TileType>>,
+    pub explored: HashSet<(usize, usize)>,
 }
 
-impl Map {
+impl BaseMap {
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             width,
             height,
             grid: vec![vec![TileType::Empty; width]; height],
+            explored: HashSet::new(),
         }
     }
 
-    pub fn print(&self) {
-        for row in &self.grid {
-            for tile in row {
-                print!("{}", tile.to_char());
+    pub fn reveal(&mut self, x: usize, y: usize) {
+        self.explored.insert((x, y));
+    }
+
+    pub fn display(&self, robot_pos: (usize, usize)) {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                if (x, y) == robot_pos {
+                    print!("🤖");
+                } else if self.explored.contains(&(x, y)) {
+                    print!("{}", match self.grid[y][x] {
+                        TileType::Water => '~',
+                        TileType::Sand => '.',
+                        TileType::Empty => ' ',
+                        TileType::Mountain => '^',
+                        TileType::Mineral => 'M',
+                        TileType::Base => 'B',  
+                    });
+                } else {
+                    print!("#");
+                }
             }
             println!();
         }
+        println!("====================");
     }
 }
 
-pub type MapModifier = Box<dyn FnMut(&mut Map)>;
+pub type MapModifier = Box<dyn FnMut(&mut BaseMap)>;

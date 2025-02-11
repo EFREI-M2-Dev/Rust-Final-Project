@@ -4,16 +4,16 @@ use crate::map::generator::generate_map;
 use crate::map::modifier::{add_random_elements, add_base_center};
 use ratatui::text::{Line, Span};
 use ratatui::style::{Style};
-use crate::map::{Map as BaseMap, TileType};
+use crate::map::{BaseMap, TileType};
 
 
 #[derive(Debug)]
-pub struct Map {
+pub struct GameMap {
     pub exit: bool,
     pub base_map: BaseMap,
 }
 
-impl Map {
+impl GameMap {
     pub fn new() -> Self {
         let width = 100;
         let height = 50;

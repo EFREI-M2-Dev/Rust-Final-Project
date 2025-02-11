@@ -1,5 +1,5 @@
 use noise::{NoiseFn, Perlin};
-use super::{Map, TileType, MapModifier};
+use super::{BaseMap, TileType, MapModifier};
 
 const SCALE: f64 = 0.05;
 const THRESHOLDS: [(TileType, f64); 4] = [
@@ -9,9 +9,9 @@ const THRESHOLDS: [(TileType, f64); 4] = [
     (TileType::Mountain, 0.9),
 ];
 
-pub fn generate_base_map(width: usize, height: usize, seed: u32) -> Map {
+pub fn generate_base_map(width: usize, height: usize, seed: u32) -> BaseMap {
     let perlin = Perlin::new(seed);
-    let mut map = Map::new(width, height);
+    let mut map = BaseMap::new(width, height);
 
     for y in 0..height {
         for x in 0..width {
@@ -33,7 +33,7 @@ pub fn generate_base_map(width: usize, height: usize, seed: u32) -> Map {
     map
 }
 
-pub fn generate_map(width: usize, height: usize, seed: u32, mut modifiers: Vec<MapModifier>) -> Map {
+pub fn generate_map(width: usize, height: usize, seed: u32, mut modifiers: Vec<MapModifier>) -> BaseMap {
     let mut map = generate_base_map(width, height, seed);
 
     for modifier in &mut modifiers {

@@ -1,10 +1,10 @@
 use rand::Rng;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
-use super::{Map, TileType, MapModifier};
+use super::{BaseMap, TileType, MapModifier};
 
 pub fn add_random_elements(tile: TileType, density: f64, seed: u32) -> MapModifier {
-    Box::new(move |map: &mut Map| {
+    Box::new(move |map: &mut BaseMap| {
         let mut rng = StdRng::seed_from_u64(seed.into());
 
         for y in 0..map.height {
@@ -18,12 +18,12 @@ pub fn add_random_elements(tile: TileType, density: f64, seed: u32) -> MapModifi
 }
 
 pub fn add_base_center() -> MapModifier {
-    Box::new(move |map: &mut Map| {
+    Box::new(move |map: &mut BaseMap| {
         let cx = map.width as isize / 2;
         let cy = map.height as isize / 2;
         let size = 3;
 
-        let can_place_base = |x: isize, y: isize, map: &Map| -> bool {
+        let can_place_base = |x: isize, y: isize, map: &BaseMap| -> bool {
             if x < 0 || y < 0 || (x + size as isize) >= map.width as isize || (y + size as isize) >= map.height as isize {
                 return false;
             }

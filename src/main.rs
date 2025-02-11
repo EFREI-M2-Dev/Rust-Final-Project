@@ -5,11 +5,11 @@ use crossterm::event::{self, Event, KeyEventKind};
 use ratatui::{DefaultTerminal, Frame};
 use std::io;
 
-/* mod robot;
+mod robot;
 mod module;
 
 use robot::{CollectorRobot, ExploratorRobot};
-use crate::robot::traits::Robot; */
+use crate::robot::traits::Robot;
 
 
 fn main() -> io::Result<()> {
@@ -27,7 +27,7 @@ pub struct App {
 #[derive(Debug)]
 enum AppState {
     Home(screens::home::Home),
-    Map(screens::map::Map),
+    Map(screens::map::GameMap),
 }
 
 impl Default for App {
@@ -72,7 +72,16 @@ impl App {
                     AppState::Home(home) => {
                         if let Some(selection) = home.handle_key_event(key_event) {
                             match selection {
-                                "Nouvelle partie" => self.state = AppState::Map(screens::map::Map::new()),
+                                "Nouvelle partie" => {
+                                    /* let mut map = screens::map::Map::new();
+                                    let mut explorator = ExploratorRobot::new("Explorateur-01", 120.0);
+                                    for _ in 0..10 {
+                                        let pos = (explorator.position().0 as usize, explorator.position().1 as usize);
+                                        map.base_map.display(pos);
+                                        explorator.move_robot(1, 0, &mut map);
+                                    } */
+                                    self.state = AppState::Map(map.base_map);
+                                }
                                 _ => {}
                             }
                         }
