@@ -4,16 +4,20 @@ pub mod modifier;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileType {
     Empty,
-    Wall, 
+    Mountain, 
     Mineral,
+    Water,
+    Sand,
 }
 
 impl TileType {
     pub fn to_char(&self) -> char {
         match self {
-            TileType::Empty => '.',
-            TileType::Wall => '#',
+            TileType::Empty => ' ',
+            TileType::Mountain => '^',
             TileType::Mineral => 'M',
+            TileType::Water => '~',
+            TileType::Sand => '.',
         }
     }
 }
