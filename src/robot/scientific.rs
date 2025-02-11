@@ -1,8 +1,19 @@
 use crate::robot::traits::Robot;
 
 pub struct ScientificRobot {
-    pub name: String,
-    
+    name: String,
+    battery: f64,
+    position: (f64, f64),
+}
+
+impl ScientificRobot {
+    pub fn new(name: &str, battery_capacity: f64) -> Self {
+        Self {
+            name: name.to_string(),
+            battery: battery_capacity,
+            position: (0.0, 0.0),
+        }
+    }
 }
 
 impl Robot for ScientificRobot {
@@ -11,30 +22,40 @@ impl Robot for ScientificRobot {
     }
 
     fn battery(&self) -> f64 {
-        0.0
-    }
-
-    fn consume_battery(&mut self, _amount: f64) {
-        // Do nothing
+        self.battery
     }
 
     fn battery_capacity(&self) -> f64 {
-        0.0
+        100.0
+    }
+
+    fn consume_battery(&mut self, amount: f64) {
+        if self.battery >= amount {
+            self.battery -= amount;
+        } else {
+            self.battery = 0.0;
+        }
     }
 
     fn position(&self) -> (f64, f64) {
-        (0.0, 0.0)
+        self.position
     }
 
-    fn set_position(&mut self, _x: f64, _y: f64) {
-        // Do nothing
+    fn set_position(&mut self, x: f64, y: f64) {
+        self.position = (x, y);
     }
 
     fn modules(&self) -> Vec<String> {
-        vec![]
+        vec!["Analyse avancée".to_string()]
     }
 
     fn perform_task(&mut self) {
-       println!("{} is doing scientific research", self.name);
+        if self.battery > 10.0 {
+            println!("{} analyse d'un lieu d'intêret...", self.name);
+            self.consume_battery(10.0);
+        } else {
+            println!("{} n’a plus assez de batterie et doit se recharger.", self.name);
+            self.recharge();
+        }
     }
 }
