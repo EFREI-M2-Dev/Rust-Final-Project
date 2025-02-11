@@ -9,7 +9,8 @@ mod robot;
 mod module;
 
 use robot::{CollectorRobot, ExploratorRobot};
-use crate::robot::traits::Robot; */
+use crate::robot::traits::Robot;
+
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
