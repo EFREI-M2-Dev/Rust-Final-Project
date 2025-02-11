@@ -1,7 +1,7 @@
 use noise::{NoiseFn, Perlin};
 use super::{Map, TileType, MapModifier};
 
-const SCALE: f64 = 0.1;
+const SCALE: f64 = 0.05;
 const THRESHOLDS: [(TileType, f64); 4] = [
     (TileType::Water, -0.2),
     (TileType::Sand, -0.1),

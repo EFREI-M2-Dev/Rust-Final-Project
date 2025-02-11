@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::prelude::Alignment;
 use crate::map::generator::generate_map;
-use crate::map::modifier::add_random_elements;
+use crate::map::modifier::{add_random_elements, add_base_center};
 use ratatui::text::{Line, Span};
 use ratatui::style::{Style};
 use crate::map::{Map as BaseMap, TileType};
@@ -20,6 +20,7 @@ impl Map {
         let seed = 42;
 
         let modifiers = vec![
+            add_base_center(),
             add_random_elements(TileType::Mineral, 0.01, seed),
         ];
 
