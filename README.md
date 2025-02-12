@@ -1,12 +1,31 @@
-# Rust projet final
+# 🦀 Rust Projet Final
 
-### Commands
-#### Build
+## 📦 Installation
+
 ```bash
-cargo build 
+git clone https://github.com/EFREI-M2-Dev/Rust-Final-Project.git
+cd Rust-Final-Project
+bash setup_git_hook.sh
 ```
 
-#### Run
+---
+
+## 🛠️ Commands
+
+### 🔨 Build
+
+```bash
+cargo build
+```
+
+### ▶️ Run
+
 ```bash
 cargo run
+```
+
+### 🧪 Test
+
+```bash
+cargo test
 ```
