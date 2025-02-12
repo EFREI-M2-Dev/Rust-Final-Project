@@ -6,7 +6,7 @@ pub mod modifier;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileType {
     Empty,
-    Mountain, 
+    Mountain,
     Mineral,
     Water,
     Sand,

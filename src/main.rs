@@ -1,5 +1,5 @@
-mod screens;
 mod map;
+mod screens;
 
 use crossterm::event::{self, Event, KeyEventKind};
 use ratatui::{DefaultTerminal, Frame};
@@ -10,7 +10,6 @@ mod module;
 
 use robot::{CollectorRobot, ExploratorRobot};
 use crate::robot::traits::Robot; */
-
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
@@ -72,7 +71,9 @@ impl App {
                     AppState::Home(home) => {
                         if let Some(selection) = home.handle_key_event(key_event) {
                             match selection {
-                                "Nouvelle partie" => self.state = AppState::Map(screens::map::Map::new()),
+                                "Nouvelle partie" => {
+                                    self.state = AppState::Map(screens::map::Map::new())
+                                }
                                 _ => {}
                             }
                         }
