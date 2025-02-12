@@ -1,9 +1,9 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{text::Line, widgets::Paragraph, style::Stylize};
 use ratatui::layout::{Constraint, Direction, Layout};
 use ratatui::symbols::border;
 use ratatui::text::Text;
 use ratatui::widgets::Block;
+use ratatui::{style::Stylize, text::Line, widgets::Paragraph};
 
 #[derive(Debug)]
 pub struct Home {
@@ -13,7 +13,6 @@ pub struct Home {
 }
 
 impl Home {
-
     pub fn new() -> Self {
         Self {
             exit: false,
@@ -55,7 +54,9 @@ impl Home {
 
         frame.render_widget(description, layout[1]);
 
-        let options: Vec<Line> = self.options.iter()
+        let options: Vec<Line> = self
+            .options
+            .iter()
             .enumerate()
             .map(|(i, &option)| {
                 if i == self.selected_index {
@@ -73,9 +74,7 @@ impl Home {
 
     pub fn handle_key_event(&mut self, key_event: KeyEvent) -> Option<&'static str> {
         match key_event.code {
-            KeyCode::Esc => {
-                self.exit = true
-            }
+            KeyCode::Esc => self.exit = true,
             KeyCode::Up => {
                 if self.selected_index > 0 {
                     self.selected_index -= 1;

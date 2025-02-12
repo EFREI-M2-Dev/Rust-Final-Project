@@ -1,11 +1,10 @@
+use crate::map::generator::generate_map;
+use crate::map::modifier::{add_base_center, add_random_elements};
+use crate::map::{Map as BaseMap, TileType};
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::prelude::Alignment;
-use crate::map::generator::generate_map;
-use crate::map::modifier::{add_random_elements, add_base_center};
+use ratatui::style::Style;
 use ratatui::text::{Line, Span};
-use ratatui::style::{Style};
-use crate::map::{BaseMap, TileType};
-
 
 #[derive(Debug)]
 pub struct GameMap {
@@ -39,13 +38,18 @@ impl GameMap {
             for tile in row {
                 let ch = tile.to_char();
                 let color = tile.to_color();
-                line.spans.push(Span::styled(ch.to_string(), Style::default().fg(color)));
+                line.spans
+                    .push(Span::styled(ch.to_string(), Style::default().fg(color)));
             }
             map_lines.push(line);
         }
 
-        let map_paragraph = ratatui::widgets::Paragraph::new(map_lines)
-            .block(ratatui::widgets::Block::default().title("Map").title_alignment(Alignment::Center).borders(ratatui::widgets::Borders::ALL));
+        let map_paragraph = ratatui::widgets::Paragraph::new(map_lines).block(
+            ratatui::widgets::Block::default()
+                .title("Map")
+                .title_alignment(Alignment::Center)
+                .borders(ratatui::widgets::Borders::ALL),
+        );
 
         frame.render_widget(map_paragraph, frame.size());
     }

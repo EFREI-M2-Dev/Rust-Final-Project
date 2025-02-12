@@ -7,7 +7,7 @@ pub mod modifier;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileType {
     Empty,
-    Mountain, 
+    Mountain,
     Mineral,
     Water,
     Sand,
@@ -97,4 +97,4 @@ impl BaseMap {
     }
 }
 
-pub type MapModifier = Box<dyn FnMut(&mut BaseMap)>;
+pub type MapModifier = Box<dyn FnMut(&mut Map)>;
