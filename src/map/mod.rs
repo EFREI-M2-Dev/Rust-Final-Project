@@ -32,7 +32,7 @@ impl TileType {
             TileType::Mineral => Color::Yellow,
             TileType::Water => Color::Blue,
             TileType::Sand => Color::Rgb(194, 178, 128),
-            TileType::Base => Color::Blue,
+            TileType::Base => Color::Rgb(250, 90, 218),
         }
     }
 }

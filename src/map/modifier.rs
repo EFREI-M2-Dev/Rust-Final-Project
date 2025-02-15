@@ -21,7 +21,7 @@ pub fn add_base_center() -> MapModifier {
     Box::new(move |map: &mut Map| {
         let cx = map.width as isize / 2;
         let cy = map.height as isize / 2;
-        let size = 3;
+        let size = 4;
 
         let can_place_base = |x: isize, y: isize, map: &Map| -> bool {
             if x < 0
