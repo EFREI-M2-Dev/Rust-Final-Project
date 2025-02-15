@@ -19,23 +19,23 @@ fn main() -> io::Result<()> {
 }
 
 #[derive(Debug)]
-pub struct App {
-    state: AppState,
+pub struct App<'a> {
+    state: AppState<'a>,
 }
 
 #[derive(Debug)]
-enum AppState {
+enum AppState<'a> {
     Home(screens::home::Home),
-    Map(screens::map::Map),
+    Map(screens::map::Map<'a>),
 }
 
-impl Default for App {
+impl Default for App<'_> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl App {
+impl App<'_> {
     pub fn new() -> Self {
         Self {
             state: AppState::Home(screens::home::Home::new()),
@@ -57,8 +57,8 @@ impl App {
         }
     }
 
-    fn draw(&self, frame: &mut Frame) {
-        match &self.state {
+    fn draw(&mut self, frame: &mut Frame) {
+        match &mut self.state {
             AppState::Home(home) => home.draw(frame),
             AppState::Map(map) => map.draw(frame),
         }
@@ -78,7 +78,13 @@ impl App {
                             }
                         }
                     }
-                    AppState::Map(map) => map.handle_key_event(key_event),
+                    AppState::Map(map) => {
+                        map.handle_key_event(key_event);
+                        if map.return_back {
+                            self.state = AppState::Home(screens::home::Home::new());
+                        }
+                    }
+
                 }
             }
             _ => {}
