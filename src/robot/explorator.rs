@@ -1,6 +1,6 @@
-use crate::robot::traits::Robot;
-use crate::module::traits::Module;
 use crate::map::BaseMap;
+use crate::module::traits::Module;
+use crate::robot::traits::Robot;
 
 pub struct ExploratorRobot {
     name: String,
@@ -73,7 +73,11 @@ impl Robot for ExploratorRobot {
             println!("✅ {} ajoute le module {}", self.name, module.name());
             self.modules.push(module);
         } else {
-            println!("❌ Impossible d'ajouter le module {} à {}, incompatibilité !", module.name(), self.name);
+            println!(
+                "❌ Impossible d'ajouter le module {} à {}, incompatibilité !",
+                module.name(),
+                self.name
+            );
         }
     }
 
@@ -84,10 +88,16 @@ impl Robot for ExploratorRobot {
 
     fn perform_task(&mut self) {
         if self.battery > 15.0 {
-            println!("{} explore la zone à la recherche de nouveaux minerais...", self.name);
+            println!(
+                "{} explore la zone à la recherche de nouveaux minerais...",
+                self.name
+            );
             self.consume_battery(15.0);
         } else {
-            println!("{} n’a plus assez de batterie et doit se recharger.", self.name);
+            println!(
+                "{} n’a plus assez de batterie et doit se recharger.",
+                self.name
+            );
             self.recharge();
         }
     }

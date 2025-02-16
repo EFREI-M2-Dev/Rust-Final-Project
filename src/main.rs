@@ -5,12 +5,11 @@ use crossterm::event::{self, Event, KeyEventKind};
 use ratatui::{DefaultTerminal, Frame};
 use std::io;
 
-mod robot;
 mod module;
+mod robot;
 
-use robot::{CollectorRobot, ExploratorRobot};
 use crate::robot::traits::Robot;
-
+use robot::{CollectorRobot, ExploratorRobot};
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();

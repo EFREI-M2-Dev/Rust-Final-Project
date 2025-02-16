@@ -61,14 +61,14 @@ impl BaseMap {
     }
 
     pub fn reveal_area(&mut self, x: usize, y: usize, radius: usize) {
-        let radius = radius as isize;  
-        
-        for dy in -radius..=radius { 
+        let radius = radius as isize;
+
+        for dy in -radius..=radius {
             for dx in -radius..=radius {
                 let nx = (x as isize + dx).clamp(0, (self.width - 1) as isize) as usize;
                 let ny = (y as isize + dy).clamp(0, (self.height - 1) as isize) as usize;
 
-                self.reveal(nx, ny); 
+                self.reveal(nx, ny);
             }
         }
     }
@@ -79,14 +79,17 @@ impl BaseMap {
                 if (x, y) == robot_pos {
                     print!("🤖");
                 } else if self.explored.contains(&(x, y)) {
-                    print!("{}", match self.grid[y][x] {
-                        TileType::Water => '~',
-                        TileType::Sand => '.',
-                        TileType::Empty => ' ',
-                        TileType::Mountain => '^',
-                        TileType::Mineral => 'M',
-                        TileType::Base => 'B',  
-                    });
+                    print!(
+                        "{}",
+                        match self.grid[y][x] {
+                            TileType::Water => '~',
+                            TileType::Sand => '.',
+                            TileType::Empty => ' ',
+                            TileType::Mountain => '^',
+                            TileType::Mineral => 'M',
+                            TileType::Base => 'B',
+                        }
+                    );
                 } else {
                     print!("#");
                 }

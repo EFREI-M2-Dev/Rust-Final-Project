@@ -1,5 +1,5 @@
-use crate::robot::traits::Robot;
 use crate::module::traits::Module;
+use crate::robot::traits::Robot;
 
 pub struct ConstructorRobot {
     name: String,
@@ -61,7 +61,11 @@ impl Robot for ConstructorRobot {
             println!("✅ {} ajoute le module {}", self.name, module.name());
             self.modules.push(module);
         } else {
-            println!("❌ Impossible d'ajouter le module {} à {}, incompatibilité !", module.name(), self.name);
+            println!(
+                "❌ Impossible d'ajouter le module {} à {}, incompatibilité !",
+                module.name(),
+                self.name
+            );
         }
     }
 
@@ -75,7 +79,10 @@ impl Robot for ConstructorRobot {
             println!("{} contruit quelque chose...", self.name);
             self.consume_battery(10.0);
         } else {
-            println!("{} n’a plus assez de batterie et doit se recharger.", self.name);
+            println!(
+                "{} n’a plus assez de batterie et doit se recharger.",
+                self.name
+            );
             self.recharge();
         }
     }
