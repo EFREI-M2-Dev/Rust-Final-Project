@@ -1,4 +1,4 @@
-use super::{Map, MapModifier, TileType};
+use super::{BaseMap, MapModifier, TileType};
 use rand::rngs::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
@@ -23,7 +23,7 @@ pub fn add_base_center() -> MapModifier {
         let cy = map.height as isize / 2;
         let size = 4;
 
-        let can_place_base = |x: isize, y: isize, map: &Map| -> bool {
+        let can_place_base = |x: isize, y: isize, map: &BaseMap| -> bool {
             if x < 0
                 || y < 0
                 || (x + size as isize) >= map.width as isize

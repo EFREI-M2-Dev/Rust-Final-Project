@@ -1,6 +1,6 @@
 use crate::map::generator::generate_map;
 use crate::map::modifier::{add_base_center, add_random_elements};
-use crate::map::{Map as BaseMap, TileType};
+use crate::map::{BaseMap, TileType};
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::prelude::Alignment;
 use ratatui::style::{Style, Stylize};

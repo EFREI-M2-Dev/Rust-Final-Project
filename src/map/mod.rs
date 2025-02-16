@@ -97,4 +97,4 @@ impl BaseMap {
     }
 }
 
-pub type MapModifier = Box<dyn FnMut(&mut Map)>;
+pub type MapModifier = Box<dyn FnMut(&mut BaseMap)>;

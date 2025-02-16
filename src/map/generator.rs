@@ -1,4 +1,4 @@
-use super::{Map, MapModifier, TileType};
+use super::{BaseMap, MapModifier, TileType};
 use noise::{NoiseFn, Perlin};
 
 const SCALE: f64 = 0.05;
@@ -38,7 +38,7 @@ pub fn generate_map(
     height: usize,
     seed: u32,
     mut modifiers: Vec<MapModifier>,
-) -> Map {
+) -> BaseMap {
     let mut map = generate_base_map(width, height, seed);
 
     for modifier in &mut modifiers {
