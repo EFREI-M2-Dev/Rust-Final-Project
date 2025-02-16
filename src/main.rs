@@ -84,7 +84,6 @@ impl App<'_> {
                             self.state = AppState::Home(screens::home::Home::new());
                         }
                     }
-
                 }
             }
             _ => {}

@@ -2,7 +2,7 @@ use crate::map::generator::generate_map;
 use crate::map::modifier::{add_base_center, add_random_elements};
 use crate::map::{Map as BaseMap, TileType};
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::prelude::{Alignment};
+use ratatui::prelude::Alignment;
 use ratatui::style::{Style, Stylize};
 use ratatui::text::{Line, Span};
 
@@ -55,8 +55,14 @@ impl<'a> Map<'a> {
 
     pub fn draw(&mut self, frame: &mut ratatui::Frame) {
         let terminal_size = frame.area();
-        self.viewport_width = terminal_size.width as usize;
-        self.viewport_height = terminal_size.height as usize;
+
+        if self.viewport_width == 0 || self.viewport_height == 0 {
+            self.viewport_width = terminal_size.width as usize;
+            self.viewport_height = terminal_size.height as usize;
+
+            self.viewport_x = (self.base_map.width.saturating_sub(self.viewport_width)) / 2;
+            self.viewport_y = (self.base_map.height.saturating_sub(self.viewport_height)) / 2;
+        }
 
         let mut visible_lines = Vec::new();
         for y in self.viewport_y..(self.viewport_y + self.viewport_height) {
@@ -72,11 +78,14 @@ impl<'a> Map<'a> {
             }
         }
 
-        let instructions = Line::from(" Utiliser les flèches pour naviguer ◀ ▶, ▲ ▼ | ESC pour revenir au menu ".red());
+        let instructions = Line::from(
+            " Utiliser les flèches pour naviguer ◀ ▶, ▲ ▼ | ESC pour revenir au menu ".red(),
+        );
         let exit = Line::from(" Esc pour quitter ".red());
         let map_paragraph = ratatui::widgets::Paragraph::new(visible_lines).block(
             ratatui::widgets::Block::default()
-                .title(" Map ").bold()
+                .title(" Map ")
+                .bold()
                 .title_alignment(Alignment::Center)
                 .title_bottom(instructions.centered())
                 .title_style(Style::default().fg(ratatui::style::Color::Yellow))
@@ -92,23 +101,25 @@ impl<'a> Map<'a> {
                 self.return_back = true;
             }
             KeyCode::Up => {
-                if self.viewport_y > 0 {
-                    self.viewport_y -= 5;
-                }
+                self.viewport_y = self.viewport_y.saturating_sub(5);
             }
             KeyCode::Down => {
                 if self.viewport_y + self.viewport_height < self.map_lines.len() {
-                    self.viewport_y += 5;
+                    self.viewport_y = (self.viewport_y + 5)
+                        .min(self.map_lines.len().saturating_sub(self.viewport_height));
                 }
             }
             KeyCode::Left => {
-                if self.viewport_x > 0 {
-                    self.viewport_x -= 5;
-                }
+                self.viewport_x = self.viewport_x.saturating_sub(5);
             }
             KeyCode::Right => {
                 if self.viewport_x + self.viewport_width < self.map_lines[0].spans.len() {
-                    self.viewport_x += 5;
+                    self.viewport_x = (self.viewport_x + 5).min(
+                        self.map_lines[0]
+                            .spans
+                            .len()
+                            .saturating_sub(self.viewport_width),
+                    );
                 }
             }
             _ => {}
