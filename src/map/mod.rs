@@ -2,6 +2,9 @@ use ratatui::style::Color;
 
 pub mod generator;
 pub mod modifier;
+mod robot;
+
+use robot::Robot;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileType {
@@ -42,21 +45,74 @@ pub struct Map {
     pub width: usize,
     pub height: usize,
     pub grid: Vec<Vec<TileType>>,
+    pub robots: Vec<Robot>,
+    pub fog: Vec<Vec<bool>>,
 }
 
 impl Map {
     pub fn new(width: usize, height: usize) -> Self {
-        Self {
+        let grid = vec![vec![TileType::Empty; width]; height];
+        let fog = vec![vec![false; width]; height];
+        Map {
             width,
             height,
-            grid: vec![vec![TileType::Empty; width]; height],
+            grid,
+            robots: vec![],
+            fog,
         }
     }
 
+    pub fn add_robot(&mut self, x: usize, y: usize) {
+        self.robots.push(Robot::new(x, y));
+        self.reveal_area(x, y);
+    }
+
+    pub fn update_fog(&mut self) {
+        let robot_positions: Vec<(usize, usize)> = self.robots.iter().map(|r| (r.x, r.y)).collect();
+
+        for (x, y) in robot_positions {
+            self.reveal_area(x, y);
+        }
+    }
+
+    fn reveal_area(&mut self, x: usize, y: usize) {
+        let radius = 3;
+        for dy in -(radius as isize)..=(radius as isize) {
+            for dx in -(radius as isize)..=(radius as isize) {
+                let nx = x as isize + dx;
+                let ny = y as isize + dy;
+
+                if nx >= 0 && ny >= 0 && nx < self.width as isize && ny < self.height as isize {
+                    self.fog[ny as usize][nx as usize] = true;
+                }
+            }
+        }
+    }
+
+    pub fn update_robots(&mut self) {
+        let width = self.width;
+        let height = self.height;
+        let grid = &self.grid;
+
+        for robot in &mut self.robots {
+            robot.move_randomly(grid, width, height);
+        }
+
+        self.update_fog();
+    }
+
     pub fn print(&self) {
-        for row in &self.grid {
-            for tile in row {
-                print!("{}", tile.to_char());
+        for y in 0..self.height {
+            for x in 0..self.width {
+                if self.fog[y][x] {
+                    if self.robots.iter().any(|r| r.x == x && r.y == y) {
+                        print!("R");
+                    } else {
+                        print!("{}", self.grid[y][x].to_char());
+                    }
+                } else {
+                    print!("#");
+                }
             }
             println!();
         }

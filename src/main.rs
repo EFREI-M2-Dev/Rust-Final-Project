@@ -1,4 +1,3 @@
-mod map;
 mod screens;
 
 use crossterm::event::{self, Event, KeyEventKind};
@@ -11,11 +10,40 @@ mod module;
 use robot::{CollectorRobot, ExploratorRobot};
 use crate::robot::traits::Robot; */
 
-fn main() -> io::Result<()> {
-    let mut terminal = ratatui::init();
-    let app_result = App::new().run(&mut terminal);
-    ratatui::restore();
-    app_result
+// fn main() -> io::Result<()> {
+//     let mut terminal = ratatui::init();
+//     let app_result = App::new().run(&mut terminal);
+//     ratatui::restore();
+//     app_result
+// }
+
+mod map;
+
+use crate::map::generator::generate_map;
+use crate::map::modifier::{add_base_center, add_random_elements};
+use map::TileType;
+
+fn main() {
+    let width = 30;
+    let height = 30;
+    let seed = 10;
+
+    let modifiers = vec![
+        add_base_center(),
+        add_random_elements(TileType::Mineral, 0.01, seed),
+    ];
+
+    let mut map = generate_map(width, height, seed, modifiers);
+
+    map.add_robot(width / 2, height / 2);
+    map.add_robot(width / 2, height / 2);
+
+    loop {
+        map.update_robots();
+        map.print();
+        println!("=====================");
+        std::thread::sleep(std::time::Duration::from_millis(1000));
+    }
 }
 
 #[derive(Debug)]
