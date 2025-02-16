@@ -23,7 +23,10 @@ impl ExploratorRobot {
         let new_x = (self.position.0 as isize + dx).clamp(0, map.width as isize - 1) as usize;
         let new_y = (self.position.1 as isize + dy).clamp(0, map.height as isize - 1) as usize;
         self.set_position(new_x as f64, new_y as f64);
-        map.reveal(new_x, new_y);
+
+        // map.reveal(new_x, new_y);
+        map.reveal_area(new_x, new_y, 3);
+
         self.battery -= 5.0;
     }
 }

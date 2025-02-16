@@ -60,6 +60,19 @@ impl BaseMap {
         self.explored.insert((x, y));
     }
 
+    pub fn reveal_area(&mut self, x: usize, y: usize, radius: usize) {
+        let radius = radius as isize;  
+        
+        for dy in -radius..=radius { 
+            for dx in -radius..=radius {
+                let nx = (x as isize + dx).clamp(0, (self.width - 1) as isize) as usize;
+                let ny = (y as isize + dy).clamp(0, (self.height - 1) as isize) as usize;
+
+                self.reveal(nx, ny); 
+            }
+        }
+    }
+
     pub fn display(&self, robot_pos: (usize, usize)) {
         for y in 0..self.height {
             for x in 0..self.width {

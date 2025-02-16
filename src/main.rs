@@ -11,6 +11,8 @@ mod module;
 use robot::{CollectorRobot, ExploratorRobot};
 use crate::robot::traits::Robot;
 
+use screens::map::GameMap;
+use map::BaseMap;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
@@ -73,14 +75,7 @@ impl App {
                         if let Some(selection) = home.handle_key_event(key_event) {
                             match selection {
                                 "Nouvelle partie" => {
-                                    /* let mut map = screens::map::Map::new();
-                                    let mut explorator = ExploratorRobot::new("Explorateur-01", 120.0);
-                                    for _ in 0..10 {
-                                        let pos = (explorator.position().0 as usize, explorator.position().1 as usize);
-                                        map.base_map.display(pos);
-                                        explorator.move_robot(1, 0, &mut map);
-                                    } */
-                                    self.state = AppState::Map(map.base_map);
+                                    self.state = AppState::Map(GameMap::new());
                                 }
                                 _ => {}
                             }
