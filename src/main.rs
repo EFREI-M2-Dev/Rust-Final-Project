@@ -11,6 +11,8 @@ mod module;
 use robot::{CollectorRobot, ExploratorRobot};
 use crate::robot::traits::Robot;
 
+use screens::map::GameMap;
+use map::BaseMap;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
