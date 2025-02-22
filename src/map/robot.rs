@@ -26,7 +26,7 @@ impl Robot {
         }
     }
 
-    pub fn move_robot(&mut self, grid: &Vec<Vec<TileType>>, width: usize, height: usize) {
+    pub fn move_robot(&mut self, grid: &mut Vec<Vec<TileType>>, width: usize, height: usize) {
         let mut rng = rand::thread_rng();
         let directions = [(0, 1), (0, -1), (1, 0), (-1, 0)];
 
@@ -51,6 +51,38 @@ impl Robot {
             }
             RobotType::Collector => {
                 let (tx, ty) = self.target.unwrap_or(self.base);
+
+                let adjacent_positions = [
+                    (self.x.wrapping_sub(1), self.y),
+                    (self.x + 1, self.y),
+                    (self.x, self.y.wrapping_sub(1)),
+                    (self.x, self.y + 1),
+                ];
+
+                for (nx, ny) in adjacent_positions.iter() {
+                    if *nx < width && *ny < height {
+                        if grid[*ny][*nx] == TileType::Mineral {
+                            // Ramasser le minerai
+                            grid[*ny][*nx] = TileType::Empty;
+                            println!("Minerai collecté à ({}, {})", *nx, *ny);
+
+                            // Revenir à la base
+                            self.target = Some(self.base);
+                            break;
+                        }
+                    }
+                }
+
+                /* if self.x == tx && self.y == ty {
+                    if grid[ty][tx] == TileType::Mineral {
+                        // Supprimer le minerai
+                        grid[ty][tx] = TileType::Empty;
+                        println!("Minerai collecté à ({}, {})", tx, ty);
+
+                        // Revenir à la base
+                        self.target = Some(self.base);
+                    }
+                } */
 
                 let mut best_x = self.x;
                 let mut best_y = self.y;
@@ -77,6 +109,11 @@ impl Robot {
 
                 self.x = best_x;
                 self.y = best_y;
+
+                if self.x == self.base.0 && self.y == self.base.1 {
+                    println!("Le robot est revenu à la base !");
+                    self.target = None;
+                }
             }
         }
     }

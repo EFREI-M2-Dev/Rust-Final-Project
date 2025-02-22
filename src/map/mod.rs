@@ -68,13 +68,13 @@ impl Map {
         self.reveal_area(x, y);
     }
 
-    pub fn update_fog(&mut self) {
+    /* pub fn update_fog(&mut self) {
         let robot_positions: Vec<(usize, usize)> = self.robots.iter().map(|r| (r.x, r.y)).collect();
 
         for (x, y) in robot_positions {
             self.reveal_area(x, y);
         }
-    }
+    } */
 
     fn reveal_area(&mut self, x: usize, y: usize) {
         let radius = 3;
@@ -93,16 +93,12 @@ impl Map {
     pub fn update_robots(&mut self) {
         let width = self.width;
         let height = self.height;
-        let grid = self.grid.clone();
-        let previous_fog = self.fog.clone();
+        let previous_fog = self.fog.clone(); // Sauvegarde l'état précédent du brouillard
 
         let mut updates = Vec::new();
 
         for robot in &mut self.robots {
-            let previous_x = robot.x;
-            let previous_y = robot.y;
-
-            robot.move_robot(&grid, width, height);
+            robot.move_robot(&mut self.grid, width, height); // Passe self.grid directement
 
             if let RobotType::Explorator = robot.robot_type {
                 updates.push((robot.x, robot.y));
@@ -117,7 +113,13 @@ impl Map {
             for x in 0..width {
                 if previous_fog[y][x] == false && self.fog[y][x] == true {
                     if self.grid[y][x] == TileType::Mineral {
-                        println!("Minerais découvert en position {}, {}", x, y);
+                        for robot in &mut self.robots {
+                            if robot.target.is_none() {
+                                if let RobotType::Collector = robot.robot_type {
+                                    robot.target = Some((x, y));
+                                }
+                            }
+                        }
                     }
                 }
             }
