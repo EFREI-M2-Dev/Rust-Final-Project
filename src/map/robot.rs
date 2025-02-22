@@ -3,8 +3,8 @@ use rand::Rng;
 
 #[derive(Debug)]
 pub enum RobotType {
-    Explorator, 
-    Collector, 
+    Explorator,
+    Collector,
 }
 #[derive(Debug)]
 pub struct Robot {
@@ -12,12 +12,18 @@ pub struct Robot {
     pub y: usize,
     pub robot_type: RobotType,
     pub base: (usize, usize),
-    pub target: Option<(usize, usize)>, 
+    pub target: Option<(usize, usize)>,
 }
 
 impl Robot {
     pub fn new(x: usize, y: usize, robot_type: RobotType) -> Self {
-        Robot { x, y, base: (x, y), robot_type, target: None }
+        Robot {
+            x,
+            y,
+            base: (x, y),
+            robot_type,
+            target: None,
+        }
     }
 
     pub fn move_robot(&mut self, grid: &Vec<Vec<TileType>>, width: usize, height: usize) {

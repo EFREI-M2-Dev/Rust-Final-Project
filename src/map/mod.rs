@@ -93,17 +93,17 @@ impl Map {
     pub fn update_robots(&mut self) {
         let width = self.width;
         let height = self.height;
-        let grid = self.grid.clone(); 
-        let previous_fog = self.fog.clone(); 
-    
-        let mut updates = Vec::new(); 
-    
+        let grid = self.grid.clone();
+        let previous_fog = self.fog.clone();
+
+        let mut updates = Vec::new();
+
         for robot in &mut self.robots {
             let previous_x = robot.x;
             let previous_y = robot.y;
-    
+
             robot.move_robot(&grid, width, height);
-    
+
             if let RobotType::Explorator = robot.robot_type {
                 updates.push((robot.x, robot.y));
             }
@@ -112,10 +112,10 @@ impl Map {
         for (x, y) in updates {
             self.reveal_area(x, y);
         }
-    
+
         for y in 0..height {
             for x in 0..width {
-                if previous_fog[y][x] == false && self.fog[y][x] == true { 
+                if previous_fog[y][x] == false && self.fog[y][x] == true {
                     if self.grid[y][x] == TileType::Mineral {
                         println!("Minerais découvert en position {}, {}", x, y);
                     }
@@ -123,9 +123,6 @@ impl Map {
             }
         }
     }
-    
-    
-    
 
     pub fn print(&self) {
         for y in 0..self.height {
