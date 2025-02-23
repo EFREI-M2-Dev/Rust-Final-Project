@@ -63,8 +63,20 @@ impl Map {
     }
 
     pub fn add_robot(&mut self, x: usize, y: usize) {
-        self.robots.push(Robot::new(x, y, RobotType::Explorator));
-        self.robots.push(Robot::new(x, y, RobotType::Collector));
+        self.robots.push(Robot::new(
+            x,
+            y,
+            RobotType::Explorator,
+            self.width,
+            self.height,
+        ));
+        self.robots.push(Robot::new(
+            x,
+            y,
+            RobotType::Collector,
+            self.width,
+            self.height,
+        ));
         self.reveal_area(x, y);
     }
 
@@ -130,8 +142,11 @@ impl Map {
         for y in 0..self.height {
             for x in 0..self.width {
                 if self.fog[y][x] {
-                    if self.robots.iter().any(|r| r.x == x && r.y == y) {
-                        print!("R");
+                    if let Some(robot) = self.robots.iter().find(|r| r.x == x && r.y == y) {
+                        match robot.robot_type {
+                            RobotType::Explorator => print!("R"),
+                            RobotType::Collector => print!("C"),
+                        }
                     } else {
                         print!("{}", self.grid[y][x].to_char());
                     }

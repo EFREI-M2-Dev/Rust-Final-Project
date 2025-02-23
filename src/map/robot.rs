@@ -1,5 +1,4 @@
 use super::TileType;
-use rand::Rng;
 
 #[derive(Debug)]
 pub enum RobotType {
@@ -13,27 +12,31 @@ pub struct Robot {
     pub robot_type: RobotType,
     pub base: (usize, usize),
     pub target: Option<(usize, usize)>,
+    pub visited_map: Vec<Vec<bool>>,
 }
 
 impl Robot {
-    pub fn new(x: usize, y: usize, robot_type: RobotType) -> Self {
+    pub fn new(x: usize, y: usize, robot_type: RobotType, width: usize, height: usize) -> Self {
         Robot {
             x,
             y,
             base: (x, y),
             robot_type,
             target: None,
+            visited_map: vec![vec![false; width]; height],
         }
     }
 
     pub fn move_robot(&mut self, grid: &mut Vec<Vec<TileType>>, width: usize, height: usize) {
-        let mut rng = rand::thread_rng();
         let directions = [(0, 1), (0, -1), (1, 0), (-1, 0)];
 
         match self.robot_type {
             RobotType::Explorator => {
-                for _ in 0..10 {
-                    let (dx, dy) = directions[rng.gen_range(0..4)];
+                let mut best_x = self.x;
+                let mut best_y = self.y;
+                let mut found_new_tile = false;
+
+                for (dx, dy) in directions.iter() {
                     let nx = self.x as isize + dx;
                     let ny = self.y as isize + dy;
 
@@ -41,14 +44,42 @@ impl Robot {
                         let nx = nx as usize;
                         let ny = ny as usize;
 
-                        if grid[ny][nx] == TileType::Empty {
-                            self.x = nx;
-                            self.y = ny;
+                        if !self.visited_map[ny][nx] && grid[ny][nx] == TileType::Empty {
+                            best_x = nx;
+                            best_y = ny;
+                            found_new_tile = true;
                             break;
                         }
                     }
                 }
+
+                if !found_new_tile {
+                    use rand::Rng;
+                    let mut rng = rand::thread_rng();
+
+                    for _ in 0..10 {
+                        let (dx, dy) = directions[rng.gen_range(0..4)];
+                        let nx = self.x as isize + dx;
+                        let ny = self.y as isize + dy;
+
+                        if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
+                            let nx = nx as usize;
+                            let ny = ny as usize;
+
+                            if grid[ny][nx] == TileType::Empty {
+                                best_x = nx;
+                                best_y = ny;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                self.x = best_x;
+                self.y = best_y;
+                self.visited_map[self.y][self.x] = true;
             }
+
             RobotType::Collector => {
                 let (tx, ty) = self.target.unwrap_or(self.base);
 

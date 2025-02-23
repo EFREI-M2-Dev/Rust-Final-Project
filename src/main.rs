@@ -36,13 +36,12 @@ fn main() {
     let mut map = generate_map(width, height, seed, modifiers);
 
     map.add_robot(width / 2, height / 2);
-    map.add_robot(width / 2, height / 2);
 
     loop {
         map.update_robots();
         map.print();
         println!("=====================");
-        std::thread::sleep(std::time::Duration::from_millis(1000));
+        std::thread::sleep(std::time::Duration::from_millis(500));
     }
 }
 
