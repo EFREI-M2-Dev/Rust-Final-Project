@@ -18,6 +18,7 @@ pub fn add_random_elements(tile: TileType, density: f64, seed: u32) -> MapModifi
     })
 }
 
+#[deprecated]
 pub fn add_base_center() -> MapModifier {
     Box::new(move |map: &mut Map| {
         let cx = map.width as isize / 2;
@@ -78,16 +79,16 @@ pub fn add_base_center() -> MapModifier {
 pub fn add_base(base: &Base) -> MapModifier {
     let base_x = base.x;
     let base_y = base.y;
-    let size = Base::SIZE;
+    let half_size = Base::SIZE as isize / 2;
 
     Box::new(move |map: &mut Map| {
-        for dy in 0..size {
-            for dx in 0..size {
-                let bx = base_x + dx;
-                let by = base_y + dy;
+        for dy in -half_size..=half_size {
+            for dx in -half_size..=half_size {
+                let bx = base_x as isize + dx;
+                let by = base_y as isize + dy - 1;
 
-                if bx < map.width && by < map.height {
-                    map.grid[by][bx] = TileType::Base;
+                if bx >= 0 && by >= 0 && bx < map.width as isize && by < map.height as isize {
+                    map.grid[by as usize][bx as usize] = TileType::Base;
                 }
             }
         }
