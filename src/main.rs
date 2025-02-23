@@ -20,7 +20,8 @@ use crate::robot::traits::Robot; */
 mod map;
 
 use crate::map::generator::generate_map;
-use crate::map::modifier::{add_base_center, add_random_elements};
+use crate::map::modifier::{add_base, add_random_elements};
+use map::base::Base;
 use map::TileType;
 
 fn main() {
@@ -28,14 +29,22 @@ fn main() {
     let height = 30;
     let seed = 10;
 
+    let mut map = generate_map(width, height, seed, vec![]);
+
+    let base_position =
+        Base::find_free_position(&map.grid).expect("Aucune place libre pour la base !");
+    let base = Base::new(base_position.0, base_position.1);
+
     let modifiers = vec![
-        add_base_center(),
+        add_base(&base),
         add_random_elements(TileType::Mineral, 0.01, seed),
     ];
 
-    let mut map = generate_map(width, height, seed, modifiers);
+    map = generate_map(width, height, seed, modifiers);
 
-    map.add_robot(width / 2, height / 2);
+    map.add_robot(base.x, base.y);
+
+    println!("Base position: {:?}", base_position);
 
     loop {
         map.update_robots();

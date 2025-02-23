@@ -1,5 +1,6 @@
 use ratatui::style::Color;
 
+pub mod base;
 pub mod generator;
 pub mod modifier;
 mod robot;

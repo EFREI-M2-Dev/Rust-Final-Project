@@ -1,3 +1,4 @@
+use super::base::Base;
 use super::{Map, MapModifier, TileType};
 use rand::rngs::StdRng;
 use rand::Rng;
@@ -68,6 +69,25 @@ pub fn add_base_center() -> MapModifier {
                 for dx in 0..size {
                     map.grid[(best_y + dy as isize) as usize][(best_x + dx as isize) as usize] =
                         TileType::Base;
+                }
+            }
+        }
+    })
+}
+
+pub fn add_base(base: &Base) -> MapModifier {
+    let base_x = base.x;
+    let base_y = base.y;
+    let size = Base::SIZE;
+
+    Box::new(move |map: &mut Map| {
+        for dy in 0..size {
+            for dx in 0..size {
+                let bx = base_x + dx;
+                let by = base_y + dy;
+
+                if bx < map.width && by < map.height {
+                    map.grid[by][bx] = TileType::Base;
                 }
             }
         }
