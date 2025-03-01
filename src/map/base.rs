@@ -7,7 +7,7 @@ pub struct Base {
 }
 
 impl Base {
-    pub const SIZE: usize = 3;
+    pub const SIZE: usize = 1;
 
     fn can_place_base(grid: &Vec<Vec<TileType>>, x: isize, y: isize) -> bool {
         if x < 0

@@ -13,6 +13,8 @@ pub struct Robot {
     pub base: (usize, usize),
     pub target: Option<(usize, usize)>,
     pub visited_map: Vec<Vec<bool>>,
+    pub discovered_minerals: Vec<(usize, usize)>,
+    pub returning_to_base: bool,
 }
 
 impl Robot {
@@ -24,6 +26,8 @@ impl Robot {
             robot_type,
             target: None,
             visited_map: vec![vec![false; width]; height],
+            discovered_minerals: Vec::new(),
+            returning_to_base: false,
         }
     }
 
@@ -32,6 +36,15 @@ impl Robot {
 
         match self.robot_type {
             RobotType::Explorator => {
+                if self.returning_to_base {
+                    self.move_towards(self.base.0, self.base.1, grid, width, height);
+                    if self.x == self.base.0 && self.y == self.base.1 {
+                        println!("📡 Transmission des données à la base !");
+                        self.returning_to_base = false;
+                    }
+                    return;
+                }
+
                 let mut best_x = self.x;
                 let mut best_y = self.y;
                 let mut found_new_tile = false;
@@ -43,6 +56,15 @@ impl Robot {
                     if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
                         let nx = nx as usize;
                         let ny = ny as usize;
+
+                        if grid[ny][nx] == TileType::Mineral {
+                            if !self.discovered_minerals.contains(&(nx, ny)) {
+                                self.discovered_minerals.push((nx, ny));
+                                println!("💎 Minéral découvert à ({}, {})", nx, ny);
+                                self.returning_to_base = true;
+                                return;
+                            }
+                        }
 
                         if !self.visited_map[ny][nx] && grid[ny][nx] == TileType::Empty {
                             best_x = nx;
@@ -147,6 +169,43 @@ impl Robot {
                 }
             }
         }
+    }
+
+    fn move_towards(
+        &mut self,
+        tx: usize,
+        ty: usize,
+        grid: &mut Vec<Vec<TileType>>,
+        width: usize,
+        height: usize,
+    ) {
+        let directions = [(0, 1), (0, -1), (1, 0), (-1, 0)];
+
+        let mut best_x = self.x;
+        let mut best_y = self.y;
+        let mut min_distance = usize::MAX;
+
+        for (dx, dy) in directions.iter() {
+            let nx = self.x as isize + dx;
+            let ny = self.y as isize + dy;
+
+            if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
+                let nx = nx as usize;
+                let ny = ny as usize;
+
+                let distance = (nx as isize - tx as isize).abs() as usize
+                    + (ny as isize - ty as isize).abs() as usize;
+
+                if grid[ny][nx] == TileType::Empty && distance < min_distance {
+                    min_distance = distance;
+                    best_x = nx;
+                    best_y = ny;
+                }
+            }
+        }
+
+        self.x = best_x;
+        self.y = best_y;
     }
 
     /* pub fn move_randomly(&mut self, grid: &Vec<Vec<TileType>>, width: usize, height: usize) {
