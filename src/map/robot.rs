@@ -1,4 +1,4 @@
-use super::TileType;
+use super::{base::Base, TileType};
 
 #[derive(Debug)]
 pub enum RobotType {
@@ -31,7 +31,13 @@ impl Robot {
         }
     }
 
-    pub fn move_robot(&mut self, grid: &mut Vec<Vec<TileType>>, width: usize, height: usize) {
+    pub fn move_robot(
+        &mut self,
+        grid: &mut Vec<Vec<TileType>>,
+        width: usize,
+        height: usize,
+        base: &mut Base,
+    ) {
         let directions = [(0, 1), (0, -1), (1, 0), (-1, 0)];
 
         match self.robot_type {
@@ -40,6 +46,7 @@ impl Robot {
                     self.move_towards(self.base.0, self.base.1, grid, width, height);
                     if self.x == self.base.0 && self.y == self.base.1 {
                         println!("📡 Transmission des données à la base !");
+                        base.receive_minerals(self.discovered_minerals.clone());
                         self.returning_to_base = false;
                     }
                     return;

@@ -4,6 +4,7 @@ use crate::map::TileType;
 pub struct Base {
     pub x: usize,
     pub y: usize,
+    pub discovered_minerals: Vec<(usize, usize)>,
 }
 
 impl Base {
@@ -46,7 +47,23 @@ impl Base {
         None
     }
 
+    pub fn receive_minerals(&mut self, minerals: Vec<(usize, usize)>) {
+        for mineral in minerals {
+            if !self.discovered_minerals.contains(&mineral) {
+                self.discovered_minerals.push(mineral);
+            }
+        }
+        println!(
+            "📡 Base a reçu {} nouvelles ressources !",
+            self.discovered_minerals.len()
+        );
+    }
+
     pub fn new(x: usize, y: usize) -> Self {
-        Base { x, y }
+        Base {
+            x,
+            y,
+            discovered_minerals: Vec::new(),
+        }
     }
 }

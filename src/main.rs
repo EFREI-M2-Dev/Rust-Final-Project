@@ -33,7 +33,7 @@ fn main() {
 
     let base_position =
         Base::find_free_position(&map.grid).expect("Aucune place libre pour la base !");
-    let base = Base::new(base_position.0, base_position.1);
+    let mut base = Base::new(base_position.0, base_position.1);
 
     let modifiers = vec![
         add_base(&base),
@@ -47,7 +47,7 @@ fn main() {
     println!("Base position: {:?}", base_position);
 
     loop {
-        map.update_robots();
+        map.update_robots(&mut base);
         map.print();
         println!("=====================");
         std::thread::sleep(std::time::Duration::from_millis(500));
