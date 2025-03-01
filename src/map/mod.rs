@@ -72,13 +72,13 @@ impl Map {
             self.width,
             self.height,
         ));
-        // self.robots.push(Robot::new(
-        //     x,
-        //     y,
-        //     RobotType::Collector,
-        //     self.width,
-        //     self.height,
-        // ));
+        self.robots.push(Robot::new(
+            x,
+            y,
+            RobotType::Collector,
+            self.width,
+            self.height,
+        ));
         self.reveal_area(x, y);
     }
 

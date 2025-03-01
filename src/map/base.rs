@@ -59,6 +59,10 @@ impl Base {
         );
     }
 
+    pub fn get_mineral_target(&mut self) -> Option<(usize, usize)> {
+        self.discovered_minerals.pop()
+    }
+
     pub fn new(x: usize, y: usize) -> Self {
         Base {
             x,

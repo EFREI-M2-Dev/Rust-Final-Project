@@ -110,6 +110,13 @@ impl Robot {
             }
 
             RobotType::Collector => {
+                if self.target.is_none() {
+                    if let Some(mineral_pos) = base.get_mineral_target() {
+                        println!("🎯 Nouveau minerai assigné au robot : {:?}", mineral_pos);
+                        self.target = Some(mineral_pos);
+                    }
+                }
+
                 let (tx, ty) = self.target.unwrap_or(self.base);
 
                 let adjacent_positions = [
@@ -124,31 +131,20 @@ impl Robot {
                         if grid[*ny][*nx] == TileType::Mineral {
                             // Ramasser le minerai
                             grid[*ny][*nx] = TileType::Empty;
-                            println!("Minerai collecté à ({}, {})", *nx, *ny);
+                            println!("🛠️ Minerai collecté à ({}, {})", *nx, *ny);
 
                             // Revenir à la base
                             self.target = Some(self.base);
-                            break;
+                            return;
                         }
                     }
                 }
-
-                /* if self.x == tx && self.y == ty {
-                    if grid[ty][tx] == TileType::Mineral {
-                        // Supprimer le minerai
-                        grid[ty][tx] = TileType::Empty;
-                        println!("Minerai collecté à ({}, {})", tx, ty);
-
-                        // Revenir à la base
-                        self.target = Some(self.base);
-                    }
-                } */
 
                 let mut best_x = self.x;
                 let mut best_y = self.y;
                 let mut min_distance = usize::MAX;
 
-                for (dx, dy) in directions.iter() {
+                for (dx, dy) in &[(0, 1), (0, -1), (1, 0), (-1, 0)] {
                     let nx = self.x as isize + dx;
                     let ny = self.y as isize + dy;
 
@@ -171,7 +167,7 @@ impl Robot {
                 self.y = best_y;
 
                 if self.x == self.base.0 && self.y == self.base.1 {
-                    println!("Le robot est revenu à la base !");
+                    println!("🏠 Robot Collector est retourné à la base !");
                     self.target = None;
                 }
             }
