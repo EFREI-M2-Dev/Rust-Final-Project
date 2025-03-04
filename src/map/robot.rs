@@ -14,6 +14,7 @@ pub struct Robot {
     pub target: Option<(usize, usize)>,
     pub visited_map: Vec<Vec<bool>>,
     pub discovered_minerals: Vec<(usize, usize)>,
+    pub discovered_energy: Vec<(usize, usize)>,
     pub returning_to_base: bool,
 }
 
@@ -27,6 +28,7 @@ impl Robot {
             target: None,
             visited_map: vec![vec![false; width]; height],
             discovered_minerals: Vec::new(),
+            discovered_energy: Vec::new(),
             returning_to_base: false,
         }
     }
@@ -46,7 +48,10 @@ impl Robot {
                     self.move_towards(self.base.0, self.base.1, grid, width, height);
                     if self.x == self.base.0 && self.y == self.base.1 {
                         println!("📡 Transmission des données à la base !");
-                        base.receive_minerals(self.discovered_minerals.clone());
+                        base.receive_resources(
+                            self.discovered_minerals.clone(),
+                            self.discovered_energy.clone(),
+                        );
                         self.returning_to_base = false;
                     }
                     return;
@@ -68,6 +73,15 @@ impl Robot {
                             if !self.discovered_minerals.contains(&(nx, ny)) {
                                 self.discovered_minerals.push((nx, ny));
                                 println!("💎 Minéral découvert à ({}, {})", nx, ny);
+                                self.returning_to_base = true;
+                                return;
+                            }
+                        }
+
+                        if grid[ny][nx] == TileType::Energy {
+                            if !self.discovered_energy.contains(&(nx, ny)) {
+                                self.discovered_energy.push((nx, ny));
+                                println!("⚡ Source d’énergie trouvée à ({}, {})", nx, ny);
                                 self.returning_to_base = true;
                                 return;
                             }
@@ -114,6 +128,12 @@ impl Robot {
                     if let Some(mineral_pos) = base.get_mineral_target() {
                         println!("🎯 Nouveau minerai assigné au robot : {:?}", mineral_pos);
                         self.target = Some(mineral_pos);
+                    } else if let Some(energy_pos) = base.get_energy_target() {
+                        println!(
+                            "⚡ Nouvelle source d’énergie assignée au robot : {:?}",
+                            energy_pos
+                        );
+                        self.target = Some(energy_pos);
                     }
                 }
 
@@ -129,11 +149,15 @@ impl Robot {
                 for (nx, ny) in adjacent_positions.iter() {
                     if *nx < width && *ny < height {
                         if grid[*ny][*nx] == TileType::Mineral {
-                            // Ramasser le minerai
                             grid[*ny][*nx] = TileType::Empty;
                             println!("🛠️ Minerai collecté à ({}, {})", *nx, *ny);
+                            self.target = Some(self.base);
+                            return;
+                        }
 
-                            // Revenir à la base
+                        if grid[*ny][*nx] == TileType::Energy {
+                            grid[*ny][*nx] = TileType::Empty;
+                            println!("⚡ Énergie collectée à ({}, {})", *nx, *ny);
                             self.target = Some(self.base);
                             return;
                         }

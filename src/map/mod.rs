@@ -16,6 +16,7 @@ pub enum TileType {
     Water,
     Sand,
     Base,
+    Energy,
 }
 
 impl TileType {
@@ -27,6 +28,7 @@ impl TileType {
             TileType::Water => '~',
             TileType::Sand => '.',
             TileType::Base => 'B',
+            TileType::Energy => 'E',
         }
     }
 
@@ -38,6 +40,7 @@ impl TileType {
             TileType::Water => Color::Blue,
             TileType::Sand => Color::Rgb(194, 178, 128),
             TileType::Base => Color::Rgb(250, 90, 218),
+            TileType::Energy => Color::Rgb(250, 90, 218),
         }
     }
 }

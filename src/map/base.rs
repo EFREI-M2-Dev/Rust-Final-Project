@@ -5,6 +5,7 @@ pub struct Base {
     pub x: usize,
     pub y: usize,
     pub discovered_minerals: Vec<(usize, usize)>,
+    pub discovered_energy: Vec<(usize, usize)>,
 }
 
 impl Base {
@@ -47,15 +48,27 @@ impl Base {
         None
     }
 
-    pub fn receive_minerals(&mut self, minerals: Vec<(usize, usize)>) {
+    pub fn receive_resources(
+        &mut self,
+        minerals: Vec<(usize, usize)>,
+        energy: Vec<(usize, usize)>,
+    ) {
         for mineral in minerals {
             if !self.discovered_minerals.contains(&mineral) {
                 self.discovered_minerals.push(mineral);
             }
         }
+
+        for energy_source in energy {
+            if !self.discovered_energy.contains(&energy_source) {
+                self.discovered_energy.push(energy_source);
+            }
+        }
+
         println!(
-            "📡 Base a reçu {} nouvelles ressources !",
-            self.discovered_minerals.len()
+            "📡 Base a reçu {} minerais et {} sources d’énergie !",
+            self.discovered_minerals.len(),
+            self.discovered_energy.len()
         );
     }
 
@@ -63,11 +76,16 @@ impl Base {
         self.discovered_minerals.pop()
     }
 
+    pub fn get_energy_target(&mut self) -> Option<(usize, usize)> {
+        self.discovered_energy.pop()
+    }
+
     pub fn new(x: usize, y: usize) -> Self {
         Base {
             x,
             y,
             discovered_minerals: Vec::new(),
+            discovered_energy: Vec::new(),
         }
     }
 }

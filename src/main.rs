@@ -38,6 +38,7 @@ fn main() {
     let modifiers = vec![
         add_base(&base),
         add_random_elements(TileType::Mineral, 0.01, seed),
+        add_random_elements(TileType::Energy, 0.006, seed),
     ];
 
     map = generate_map(width, height, seed, modifiers);
