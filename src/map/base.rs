@@ -6,6 +6,8 @@ pub struct Base {
     pub y: usize,
     pub discovered_minerals: Vec<(usize, usize)>,
     pub discovered_energy: Vec<(usize, usize)>,
+    pub stored_minerals: usize,
+    pub stored_energy: usize,
 }
 
 impl Base {
@@ -72,6 +74,21 @@ impl Base {
         );
     }
 
+    pub fn receive_inventory(&mut self, mineral_count: usize, energy_count: usize) {
+        self.stored_minerals += mineral_count;
+        self.stored_energy += energy_count;
+
+        println!(
+            "🧳 Base a reçu {} minerais et {} sources d’énergie !",
+            mineral_count, energy_count
+        );
+
+        println!(
+            "📦 Inventaire total → Minerais: {}, Énergie: {}",
+            self.stored_minerals, self.stored_energy
+        );
+    }
+
     pub fn get_mineral_target(&mut self) -> Option<(usize, usize)> {
         self.discovered_minerals.pop()
     }
@@ -86,6 +103,8 @@ impl Base {
             y,
             discovered_minerals: Vec::new(),
             discovered_energy: Vec::new(),
+            stored_minerals: 0,
+            stored_energy: 0,
         }
     }
 }

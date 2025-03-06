@@ -16,6 +16,8 @@ pub struct Robot {
     pub discovered_minerals: Vec<(usize, usize)>,
     pub discovered_energy: Vec<(usize, usize)>,
     pub returning_to_base: bool,
+    pub inventory: Vec<TileType>,
+    pub max_capacity: usize,
 }
 
 impl Robot {
@@ -30,6 +32,8 @@ impl Robot {
             discovered_minerals: Vec::new(),
             discovered_energy: Vec::new(),
             returning_to_base: false,
+            inventory: Vec::new(),
+            max_capacity: 2,
         }
     }
 
@@ -124,6 +128,34 @@ impl Robot {
             }
 
             RobotType::Collector => {
+                if self.returning_to_base {
+                    self.move_towards(self.base.0, self.base.1, grid, width, height);
+                    if self.x == self.base.0 && self.y == self.base.1 {
+                        println!(
+                            "🏠 Robot Collector a déposé {} ressources à la base !",
+                            self.inventory.len()
+                        );
+
+                        let mineral_count = self
+                            .inventory
+                            .iter()
+                            .filter(|&&r| r == TileType::Mineral)
+                            .count();
+                        let energy_count = self
+                            .inventory
+                            .iter()
+                            .filter(|&&r| r == TileType::Energy)
+                            .count();
+
+                        base.receive_inventory(mineral_count, energy_count);
+
+                        self.inventory.clear();
+                        self.returning_to_base = false;
+                        self.target = None;
+                    }
+                    return;
+                }
+
                 if self.target.is_none() {
                     if let Some(mineral_pos) = base.get_mineral_target() {
                         println!("🎯 Nouveau minerai assigné au robot : {:?}", mineral_pos);
@@ -148,17 +180,19 @@ impl Robot {
 
                 for (nx, ny) in adjacent_positions.iter() {
                     if *nx < width && *ny < height {
-                        if grid[*ny][*nx] == TileType::Mineral {
-                            grid[*ny][*nx] = TileType::Empty;
-                            println!("🛠️ Minerai collecté à ({}, {})", *nx, *ny);
-                            self.target = Some(self.base);
-                            return;
-                        }
+                        if grid[*ny][*nx] == TileType::Mineral || grid[*ny][*nx] == TileType::Energy
+                        {
+                            println!("🛠️ Ressource collectée à ({}, {})", *nx, *ny);
 
-                        if grid[*ny][*nx] == TileType::Energy {
+                            self.inventory.push(grid[*ny][*nx]);
                             grid[*ny][*nx] = TileType::Empty;
-                            println!("⚡ Énergie collectée à ({}, {})", *nx, *ny);
-                            self.target = Some(self.base);
+
+                            if self.inventory.len() >= self.max_capacity {
+                                println!("📦 Inventaire plein ! Retour à la base...");
+                                self.returning_to_base = true;
+                            } else {
+                                self.target = None;
+                            }
                             return;
                         }
                     }
@@ -189,11 +223,6 @@ impl Robot {
 
                 self.x = best_x;
                 self.y = best_y;
-
-                if self.x == self.base.0 && self.y == self.base.1 {
-                    println!("🏠 Robot Collector est retourné à la base !");
-                    self.target = None;
-                }
             }
         }
     }
@@ -234,26 +263,4 @@ impl Robot {
         self.x = best_x;
         self.y = best_y;
     }
-
-    /* pub fn move_randomly(&mut self, grid: &Vec<Vec<TileType>>, width: usize, height: usize) {
-        let mut rng = rand::thread_rng();
-        let directions = [(0, 1), (0, -1), (1, 0), (-1, 0)];
-
-        for _ in 0..10 {
-            let (dx, dy) = directions[rng.gen_range(0..4)];
-            let nx = self.x as isize + dx;
-            let ny = self.y as isize + dy;
-
-            if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
-                let nx = nx as usize;
-                let ny = ny as usize;
-
-                if grid[ny][nx] == TileType::Empty {
-                    self.x = nx;
-                    self.y = ny;
-                    break;
-                }
-            }
-        }
-    } */
 }
