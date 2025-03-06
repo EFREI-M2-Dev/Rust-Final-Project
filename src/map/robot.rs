@@ -180,7 +180,9 @@ impl Robot {
 
                 for (nx, ny) in adjacent_positions.iter() {
                     if *nx < width && *ny < height {
-                        if grid[*ny][*nx] == TileType::Mineral || grid[*ny][*nx] == TileType::Energy
+                        if (*nx, *ny) == (tx, ty)
+                            && (grid[*ny][*nx] == TileType::Mineral
+                                || grid[*ny][*nx] == TileType::Energy)
                         {
                             println!("🛠️ Ressource collectée à ({}, {})", *nx, *ny);
 
@@ -198,31 +200,7 @@ impl Robot {
                     }
                 }
 
-                let mut best_x = self.x;
-                let mut best_y = self.y;
-                let mut min_distance = usize::MAX;
-
-                for (dx, dy) in &[(0, 1), (0, -1), (1, 0), (-1, 0)] {
-                    let nx = self.x as isize + dx;
-                    let ny = self.y as isize + dy;
-
-                    if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
-                        let nx = nx as usize;
-                        let ny = ny as usize;
-
-                        let distance = (nx as isize - tx as isize).abs() as usize
-                            + (ny as isize - ty as isize).abs() as usize;
-
-                        if grid[ny][nx] == TileType::Empty && distance < min_distance {
-                            min_distance = distance;
-                            best_x = nx;
-                            best_y = ny;
-                        }
-                    }
-                }
-
-                self.x = best_x;
-                self.y = best_y;
+                self.move_towards(tx, ty, grid, width, height);
             }
         }
     }
