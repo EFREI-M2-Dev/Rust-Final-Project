@@ -1,4 +1,5 @@
 use crate::map::TileType;
+use std::collections::HashSet;
 
 #[derive(Debug)]
 pub struct Base {
@@ -8,6 +9,8 @@ pub struct Base {
     pub discovered_energy: Vec<(usize, usize)>,
     pub stored_minerals: usize,
     pub stored_energy: usize,
+    collected_minerals: HashSet<(usize, usize)>,
+    collected_energies: HashSet<(usize, usize)>,
 }
 
 impl Base {
@@ -74,9 +77,26 @@ impl Base {
         );
     }
 
-    pub fn receive_inventory(&mut self, mineral_count: usize, energy_count: usize) {
+    pub fn receive_inventory(
+        &mut self,
+        mineral_count: usize,
+        energy_count: usize,
+        ressources_deposited: &mut Vec<(usize, usize)>,
+    ) {
         self.stored_minerals += mineral_count;
         self.stored_energy += energy_count;
+
+        for _ in 0..mineral_count {
+            if let Some((x, y)) = self.discovered_minerals.pop() {
+                ressources_deposited.push((x, y));
+            }
+        }
+
+        for _ in 0..energy_count {
+            if let Some((x, y)) = self.discovered_energy.pop() {
+                ressources_deposited.push((x, y));
+            }
+        }
 
         println!(
             "🧳 Base a reçu {} minerais et {} sources d’énergie !",
@@ -90,11 +110,23 @@ impl Base {
     }
 
     pub fn get_mineral_target(&mut self) -> Option<(usize, usize)> {
-        self.discovered_minerals.pop()
+        for (i, &mineral) in self.discovered_minerals.iter().enumerate() {
+            if !self.collected_minerals.contains(&mineral) {
+                self.collected_minerals.insert(mineral);
+                return Some(self.discovered_minerals.remove(i));
+            }
+        }
+        None
     }
 
     pub fn get_energy_target(&mut self) -> Option<(usize, usize)> {
-        self.discovered_energy.pop()
+        for (i, &energy) in self.discovered_energy.iter().enumerate() {
+            if !self.collected_energies.contains(&energy) {
+                self.collected_energies.insert(energy);
+                return Some(self.discovered_energy.remove(i));
+            }
+        }
+        None
     }
 
     pub fn new(x: usize, y: usize) -> Self {
@@ -105,6 +137,8 @@ impl Base {
             discovered_energy: Vec::new(),
             stored_minerals: 0,
             stored_energy: 0,
+            collected_minerals: HashSet::new(),
+            collected_energies: HashSet::new(),
         }
     }
 }

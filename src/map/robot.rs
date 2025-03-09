@@ -146,9 +146,14 @@ impl Robot {
                             .iter()
                             .filter(|&&r| r == TileType::Energy)
                             .count();
+                        let mut ressources_deposited: Vec<(usize, usize)> =
+                            self.inventory.iter().map(|_| (self.x, self.y)).collect();
 
-                        base.receive_inventory(mineral_count, energy_count);
-
+                        base.receive_inventory(
+                            mineral_count,
+                            energy_count,
+                            &mut ressources_deposited,
+                        );
                         self.inventory.clear();
                         self.returning_to_base = false;
                         self.target = None;

@@ -113,12 +113,12 @@ impl Map {
     pub fn update_robots(&mut self, base: &mut Base) {
         let width = self.width;
         let height = self.height;
-        let previous_fog = self.fog.clone(); // Sauvegarde l'état précédent du brouillard
+        let previous_fog = self.fog.clone();
 
         let mut updates = Vec::new();
 
         for robot in &mut self.robots {
-            robot.move_robot(&mut self.grid, width, height, base); // Passe self.grid directement
+            robot.move_robot(&mut self.grid, width, height, base);
 
             if let RobotType::Explorator = robot.robot_type {
                 updates.push((robot.x, robot.y));
