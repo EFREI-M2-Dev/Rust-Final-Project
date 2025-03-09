@@ -1,3 +1,6 @@
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
+
 use super::{base::Base, TileType};
 
 #[derive(Debug)]
@@ -18,10 +21,18 @@ pub struct Robot {
     pub returning_to_base: bool,
     pub inventory: Vec<TileType>,
     pub max_capacity: usize,
+    pub rng: StdRng,
 }
 
 impl Robot {
-    pub fn new(x: usize, y: usize, robot_type: RobotType, width: usize, height: usize) -> Self {
+    pub fn new(
+        x: usize,
+        y: usize,
+        robot_type: RobotType,
+        width: usize,
+        height: usize,
+        seed: u32,
+    ) -> Self {
         Robot {
             x,
             y,
@@ -34,6 +45,7 @@ impl Robot {
             returning_to_base: false,
             inventory: Vec::new(),
             max_capacity: 2,
+            rng: StdRng::seed_from_u64(seed.into()),
         }
     }
 
@@ -114,11 +126,8 @@ impl Robot {
                 }
 
                 if !found_new_tile {
-                    use rand::Rng;
-                    let mut rng = rand::thread_rng();
-
                     for _ in 0..10 {
-                        let (dx, dy) = directions[rng.gen_range(0..4)];
+                        let (dx, dy) = directions[self.rng.gen_range(0..4)];
                         let nx = self.x as isize + dx;
                         let ny = self.y as isize + dy;
 

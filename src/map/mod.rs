@@ -70,13 +70,14 @@ impl Map {
         }
     }
 
-    pub fn add_robot(&mut self, x: usize, y: usize) {
+    pub fn add_robot(&mut self, x: usize, y: usize, seed: u32) {
         self.robots.push(Robot::new(
             x,
             y,
             RobotType::Explorator,
             self.width,
             self.height,
+            seed,
         ));
         self.robots.push(Robot::new(
             x,
@@ -84,6 +85,7 @@ impl Map {
             RobotType::Collector,
             self.width,
             self.height,
+            seed,
         ));
         self.reveal_area(x, y);
     }

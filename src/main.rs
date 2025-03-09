@@ -44,7 +44,7 @@ fn main() {
 
     map = generate_map(width, height, seed, modifiers);
 
-    map.add_robot(base.x, base.y);
+    map.add_robot(base.x, base.y, seed);
 
     println!("Base position: {:?}", base_position);
 
