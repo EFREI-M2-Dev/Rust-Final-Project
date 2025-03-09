@@ -65,6 +65,37 @@ impl Robot {
                 let mut best_y = self.y;
                 let mut found_new_tile = false;
 
+                let radius = 3;
+                for dy in -radius..=radius {
+                    for dx in -radius..=radius {
+                        let nx = self.x as isize + dx;
+                        let ny = self.y as isize + dy;
+
+                        if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
+                            let nx = nx as usize;
+                            let ny = ny as usize;
+
+                            if grid[ny][nx] == TileType::Mineral
+                                && !self.discovered_minerals.contains(&(nx, ny))
+                            {
+                                self.discovered_minerals.push((nx, ny));
+                                println!("💎 Minéral découvert à ({}, {})", nx, ny);
+                                self.returning_to_base = true;
+                                return;
+                            }
+
+                            if grid[ny][nx] == TileType::Energy
+                                && !self.discovered_energy.contains(&(nx, ny))
+                            {
+                                self.discovered_energy.push((nx, ny));
+                                println!("⚡ Source d’énergie trouvée à ({}, {})", nx, ny);
+                                self.returning_to_base = true;
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 for (dx, dy) in directions.iter() {
                     let nx = self.x as isize + dx;
                     let ny = self.y as isize + dy;
@@ -72,24 +103,6 @@ impl Robot {
                     if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
                         let nx = nx as usize;
                         let ny = ny as usize;
-
-                        if grid[ny][nx] == TileType::Mineral {
-                            if !self.discovered_minerals.contains(&(nx, ny)) {
-                                self.discovered_minerals.push((nx, ny));
-                                println!("💎 Minéral découvert à ({}, {})", nx, ny);
-                                self.returning_to_base = true;
-                                return;
-                            }
-                        }
-
-                        if grid[ny][nx] == TileType::Energy {
-                            if !self.discovered_energy.contains(&(nx, ny)) {
-                                self.discovered_energy.push((nx, ny));
-                                println!("⚡ Source d’énergie trouvée à ({}, {})", nx, ny);
-                                self.returning_to_base = true;
-                                return;
-                            }
-                        }
 
                         if !self.visited_map[ny][nx] && grid[ny][nx] == TileType::Empty {
                             best_x = nx;
