@@ -129,21 +129,21 @@ impl Map {
             self.reveal_area(x, y);
         }
 
-        for y in 0..height {
-            for x in 0..width {
-                if previous_fog[y][x] == false && self.fog[y][x] == true {
-                    if self.grid[y][x] == TileType::Mineral {
-                        for robot in &mut self.robots {
-                            if robot.target.is_none() {
-                                if let RobotType::Collector = robot.robot_type {
-                                    robot.target = Some((x, y));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // for y in 0..height {
+        //     for x in 0..width {
+        //         if previous_fog[y][x] == false && self.fog[y][x] == true {
+        //             if self.grid[y][x] == TileType::Mineral {
+        //                 for robot in &mut self.robots {
+        //                     if robot.target.is_none() {
+        //                         if let RobotType::Collector = robot.robot_type {
+        //                             robot.target = Some((x, y));
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     pub fn print(&self) {
