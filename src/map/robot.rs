@@ -22,6 +22,7 @@ pub struct Robot {
     pub inventory: Vec<TileType>,
     pub max_capacity: usize,
     pub rng: StdRng,
+    pub previous_positions: Vec<(usize, usize)>,
 }
 
 impl Robot {
@@ -46,6 +47,7 @@ impl Robot {
             inventory: Vec::new(),
             max_capacity: 2,
             rng: StdRng::seed_from_u64(seed.into()),
+            previous_positions: Vec::new(),
         }
     }
 
@@ -245,6 +247,7 @@ impl Robot {
         let mut best_x = self.x;
         let mut best_y = self.y;
         let mut min_distance = usize::MAX;
+        let mut found_new_tile = false; 
 
         for (dx, dy) in directions.iter() {
             let nx = self.x as isize + dx;
@@ -258,14 +261,23 @@ impl Robot {
                     + (ny as isize - ty as isize).abs() as usize;
 
                 if grid[ny][nx] == TileType::Empty && distance < min_distance {
-                    min_distance = distance;
-                    best_x = nx;
-                    best_y = ny;
+                    if !self.previous_positions.contains(&(nx, ny)) {
+                        best_x = nx;
+                        best_y = ny;
+                        min_distance = distance;
+                        found_new_tile = true;
+                    }
                 }
             }
         }
 
         self.x = best_x;
         self.y = best_y;
+
+        self.previous_positions.push((self.x, self.y));
+
+        if self.previous_positions.len() > 5 {
+            self.previous_positions.remove(0);
+        }
     }
 }
