@@ -1,5 +1,6 @@
 use crate::map::generator::generate_map;
 use crate::map::modifier::{add_base_center, add_random_elements};
+use crate::map::robot::{Robot, RobotType};
 use crate::map::{Map as BaseMap, TileType};
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::prelude::Alignment;
@@ -74,6 +75,30 @@ impl<'a> Map<'a> {
                         visible_line.spans.push(line.spans[x].clone());
                     }
                 }
+
+                for robot in &self.base_map.robots {
+                    if robot.x >= self.viewport_x
+                        && robot.x < self.viewport_x + self.viewport_width
+                        && robot.y >= self.viewport_y
+                        && robot.y < self.viewport_y + self.viewport_height
+                    {
+                        let robot_x = robot.x - self.viewport_x;
+                        let robot_y = robot.y - self.viewport_y;
+
+                        let symbol = match robot.robot_type {
+                            RobotType::Explorator => 'R',
+                            RobotType::Collector => 'C',
+                        };
+
+                        let span = Span::styled(
+                            symbol.to_string(),
+                            Style::default().fg(ratatui::style::Color::Green),
+                        );
+
+                        visible_line.spans[robot_x] = span;
+                    }
+                }
+
                 visible_lines.push(visible_line);
             }
         }

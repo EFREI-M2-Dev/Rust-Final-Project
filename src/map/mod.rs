@@ -1,12 +1,10 @@
 use base::Base;
 use ratatui::style::Color;
-
+use robot::{Robot, RobotType};
 pub mod base;
 pub mod generator;
 pub mod modifier;
-mod robot;
-
-use robot::{Robot, RobotType};
+pub mod robot;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileType {
@@ -90,14 +88,6 @@ impl Map {
         self.reveal_area(x, y);
     }
 
-    /* pub fn update_fog(&mut self) {
-        let robot_positions: Vec<(usize, usize)> = self.robots.iter().map(|r| (r.x, r.y)).collect();
-
-        for (x, y) in robot_positions {
-            self.reveal_area(x, y);
-        }
-    } */
-
     fn reveal_area(&mut self, x: usize, y: usize) {
         let radius = 3;
         for dy in -(radius as isize)..=(radius as isize) {
@@ -130,22 +120,6 @@ impl Map {
         for (x, y) in updates {
             self.reveal_area(x, y);
         }
-
-        // for y in 0..height {
-        //     for x in 0..width {
-        //         if previous_fog[y][x] == false && self.fog[y][x] == true {
-        //             if self.grid[y][x] == TileType::Mineral {
-        //                 for robot in &mut self.robots {
-        //                     if robot.target.is_none() {
-        //                         if let RobotType::Collector = robot.robot_type {
-        //                             robot.target = Some((x, y));
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
     }
 
     pub fn print(&self) {
