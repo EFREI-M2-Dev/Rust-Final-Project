@@ -1,5 +1,7 @@
 use base::Base;
 use ratatui::style::Color;
+use rayon::prelude::*;
+use std::sync::{Arc, Mutex};
 
 pub mod base;
 pub mod generator;
@@ -90,14 +92,6 @@ impl Map {
         self.reveal_area(x, y);
     }
 
-    /* pub fn update_fog(&mut self) {
-        let robot_positions: Vec<(usize, usize)> = self.robots.iter().map(|r| (r.x, r.y)).collect();
-
-        for (x, y) in robot_positions {
-            self.reveal_area(x, y);
-        }
-    } */
-
     fn reveal_area(&mut self, x: usize, y: usize) {
         let radius = 3;
         for dy in -(radius as isize)..=(radius as isize) {
@@ -115,37 +109,27 @@ impl Map {
     pub fn update_robots(&mut self, base: &mut Base) {
         let width = self.width;
         let height = self.height;
-        let previous_fog = self.fog.clone();
 
-        let mut updates = Vec::new();
+        let grid = Arc::new(Mutex::new(&mut self.grid));
+        let base = Arc::new(Mutex::new(base));
+        let updates = Arc::new(Mutex::new(Vec::new()));
 
-        for robot in &mut self.robots {
-            robot.move_robot(&mut self.grid, width, height, base);
+        self.robots.par_iter_mut().for_each(|robot| {
+            let mut grid = grid.lock().unwrap();
+            let mut base = base.lock().unwrap();
+            let mut updates = updates.lock().unwrap();
+
+            robot.move_robot(&mut grid, width, height, &mut base);
 
             if let RobotType::Explorator = robot.robot_type {
                 updates.push((robot.x, robot.y));
             }
-        }
+        });
 
+        let updates = Arc::try_unwrap(updates).unwrap().into_inner().unwrap();
         for (x, y) in updates {
             self.reveal_area(x, y);
         }
-
-        // for y in 0..height {
-        //     for x in 0..width {
-        //         if previous_fog[y][x] == false && self.fog[y][x] == true {
-        //             if self.grid[y][x] == TileType::Mineral {
-        //                 for robot in &mut self.robots {
-        //                     if robot.target.is_none() {
-        //                         if let RobotType::Collector = robot.robot_type {
-        //                             robot.target = Some((x, y));
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
     }
 
     pub fn print(&self) {
