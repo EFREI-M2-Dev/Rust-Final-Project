@@ -1,5 +1,6 @@
+use crate::map::base::Base;
 use crate::map::generator::generate_map;
-use crate::map::modifier::{add_base_center, add_random_elements};
+use crate::map::modifier::{add_base, add_random_elements};
 use crate::map::robot::{Robot, RobotType};
 use crate::map::{Map as BaseMap, TileType};
 use crossterm::event::{KeyCode, KeyEvent};
@@ -24,12 +25,16 @@ impl<'a> Map<'a> {
         let height = 75;
         let seed = 42;
 
+        let map = generate_map(width, height, seed, vec![]);
+
+        let base = map.base;
+
         let modifiers = vec![
-            add_base_center(),
+            add_base(&base),
             add_random_elements(TileType::Mineral, 0.01, seed),
         ];
 
-        let generated_map = generate_map(width, height, seed, modifiers);
+        let mut generated_map = generate_map(width, height, seed, modifiers);
 
         let mut map_lines = Vec::new();
         for row in &generated_map.grid {
@@ -42,6 +47,8 @@ impl<'a> Map<'a> {
             }
             map_lines.push(line);
         }
+
+        generated_map.add_robot(width / 2, height / 2, seed);
 
         Self {
             return_back: false,
@@ -75,31 +82,30 @@ impl<'a> Map<'a> {
                         visible_line.spans.push(line.spans[x].clone());
                     }
                 }
-
-                for robot in &self.base_map.robots {
-                    if robot.x >= self.viewport_x
-                        && robot.x < self.viewport_x + self.viewport_width
-                        && robot.y >= self.viewport_y
-                        && robot.y < self.viewport_y + self.viewport_height
-                    {
-                        let robot_x = robot.x - self.viewport_x;
-                        let robot_y = robot.y - self.viewport_y;
-
-                        let symbol = match robot.robot_type {
-                            RobotType::Explorator => 'R',
-                            RobotType::Collector => 'C',
-                        };
-
-                        let span = Span::styled(
-                            symbol.to_string(),
-                            Style::default().fg(ratatui::style::Color::Green),
-                        );
-
-                        visible_line.spans[robot_x] = span;
-                    }
-                }
-
                 visible_lines.push(visible_line);
+            }
+        }
+
+        for robot in &self.base_map.robots {
+            if robot.x >= self.viewport_x
+                && robot.x < self.viewport_x + self.viewport_width
+                && robot.y >= self.viewport_y
+                && robot.y < self.viewport_y + self.viewport_height
+            {
+                let robot_x = robot.x - self.viewport_x;
+                let robot_y = robot.y - self.viewport_y;
+
+                let symbol = match robot.robot_type {
+                    RobotType::Explorator => 'R',
+                    RobotType::Collector => 'C',
+                };
+
+                let span = Span::styled(
+                    symbol.to_string(),
+                    Style::default().fg(ratatui::style::Color::Green),
+                );
+
+                visible_lines[robot_y].spans[robot_x] = span;
             }
         }
 
@@ -118,6 +124,11 @@ impl<'a> Map<'a> {
         );
 
         frame.render_widget(map_paragraph, terminal_size);
+    }
+
+    pub fn update(&mut self) {
+        let mut base = self.base_map.base.clone(); 
+        self.base_map.update_robots(&mut base);
     }
 
     pub fn handle_key_event(&mut self, key_event: KeyEvent) {

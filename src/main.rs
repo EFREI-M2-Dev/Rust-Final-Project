@@ -1,5 +1,4 @@
 mod app;
-mod game;
 mod input;
 mod map;
 mod screens;

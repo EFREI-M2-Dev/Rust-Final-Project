@@ -1,5 +1,4 @@
 use crate::app::AppState;
-use crate::game;
 use crate::screens;
 use crossterm::event::{self, Event, KeyEventKind};
 use std::io;
@@ -12,7 +11,6 @@ pub fn handle_events(state: &mut AppState) -> io::Result<()> {
                     if let Some(selection) = home.handle_key_event(key_event) {
                         match selection {
                             "Nouvelle partie" => {
-                                /*  game::start_game(); */
                                 *state = AppState::Map(screens::map::Map::new());
                             }
                             _ => {}
