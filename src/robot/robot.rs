@@ -1,15 +1,10 @@
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 
+use super::robot_type::RobotType;
+use crate::map::{base::Base, TileType};
 use crate::utils::debug_to_terminal::debug_to_terminal;
 
-use super::{base::Base, TileType};
-
-#[derive(Debug)]
-pub enum RobotType {
-    Explorator,
-    Collector,
-}
 #[derive(Debug)]
 pub struct Robot {
     pub x: usize,
@@ -95,7 +90,10 @@ impl Robot {
                                 && !self.discovered_minerals.contains(&(nx, ny))
                             {
                                 self.discovered_minerals.push((nx, ny));
-                                debug_to_terminal(&format!("💎 Minéral découvert à ({}, {})", nx, ny));
+                                debug_to_terminal(&format!(
+                                    "💎 Minéral découvert à ({}, {})",
+                                    nx, ny
+                                ));
                                 self.returning_to_base = true;
                                 return;
                             }
@@ -104,7 +102,10 @@ impl Robot {
                                 && !self.discovered_energy.contains(&(nx, ny))
                             {
                                 self.discovered_energy.push((nx, ny));
-                                debug_to_terminal(&format!("⚡ Source d’énergie trouvée à ({}, {})", nx, ny));
+                                debug_to_terminal(&format!(
+                                    "⚡ Source d’énergie trouvée à ({}, {})",
+                                    nx, ny
+                                ));
                                 self.returning_to_base = true;
                                 return;
                             }
@@ -159,8 +160,8 @@ impl Robot {
                     if self.x == self.base.0 && self.y == self.base.1 {
                         debug_to_terminal(&format!(
                             "🏠 Robot Collector a déposé {} ressources à la base !",
-                            self.inventory.len())
-                        );
+                            self.inventory.len()
+                        ));
 
                         let mineral_count = self
                             .inventory
@@ -189,13 +190,16 @@ impl Robot {
 
                 if self.target.is_none() {
                     if let Some(mineral_pos) = base.get_mineral_target() {
-                        debug_to_terminal(&format!("🎯 Nouveau minerai assigné au robot : {:?}", mineral_pos));
+                        debug_to_terminal(&format!(
+                            "🎯 Nouveau minerai assigné au robot : {:?}",
+                            mineral_pos
+                        ));
                         self.target = Some(mineral_pos);
                     } else if let Some(energy_pos) = base.get_energy_target() {
                         debug_to_terminal(&format!(
                             "⚡ Nouvelle source d’énergie assignée au robot : {:?}",
-                            energy_pos)
-                        );
+                            energy_pos
+                        ));
                         self.target = Some(energy_pos);
                     }
                 }
@@ -215,7 +219,10 @@ impl Robot {
                             && (grid[*ny][*nx] == TileType::Mineral
                                 || grid[*ny][*nx] == TileType::Energy)
                         {
-                            debug_to_terminal(&format!("🛠️ Ressource collectée à ({}, {})", *nx, *ny));
+                            debug_to_terminal(&format!(
+                                "🛠️ Ressource collectée à ({}, {})",
+                                *nx, *ny
+                            ));
 
                             self.inventory.push(grid[*ny][*nx]);
                             grid[*ny][*nx] = TileType::Empty;

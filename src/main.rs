@@ -1,11 +1,10 @@
-
 mod map;
+mod robot;
 mod utils;
 
 use crate::map::base::Base;
 use crate::map::generator::generate_map;
 use crate::map::modifier::{add_base, add_random_elements};
-use crate::map::robot::RobotType;
 use crate::map::TileType;
 
 use crossterm::{
@@ -14,6 +13,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{prelude::*, widgets::*};
+use robot::RobotType;
 use std::io::{self, stdout};
 
 fn main() -> io::Result<()> {

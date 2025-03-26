@@ -1,12 +1,12 @@
 use base::Base;
 use ratatui::style::Color;
 use rayon::prelude::*;
-use robot::{Robot, RobotType};
 use std::sync::{Arc, Mutex};
+
+use crate::robot::{Robot, RobotType};
 pub mod base;
 pub mod generator;
 pub mod modifier;
-pub mod robot;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileType {
