@@ -1,6 +1,8 @@
 use base::Base;
 use ratatui::style::Color;
+use rayon::prelude::*;
 use robot::{Robot, RobotType};
+use std::sync::{Arc, Mutex};
 pub mod base;
 pub mod generator;
 pub mod modifier;
@@ -111,18 +113,24 @@ impl Map {
     pub fn update_robots(&mut self, base: &mut Base) {
         let width = self.width;
         let height = self.height;
-        let previous_fog = self.fog.clone();
 
-        let mut updates = Vec::new();
+        let grid = Arc::new(Mutex::new(&mut self.grid));
+        let base = Arc::new(Mutex::new(base));
+        let updates = Arc::new(Mutex::new(Vec::new()));
 
-        for robot in &mut self.robots {
-            robot.move_robot(&mut self.grid, width, height, base);
+        self.robots.par_iter_mut().for_each(|robot| {
+            let mut grid = grid.lock().unwrap();
+            let mut base = base.lock().unwrap();
+            let mut updates = updates.lock().unwrap();
+
+            robot.move_robot(&mut grid, width, height, &mut base);
 
             if let RobotType::Explorator = robot.robot_type {
                 updates.push((robot.x, robot.y));
             }
-        }
+        });
 
+        let updates = Arc::try_unwrap(updates).unwrap().into_inner().unwrap();
         for (x, y) in updates {
             self.reveal_area(x, y);
         }
