@@ -1,4 +1,4 @@
-use crate::map::TileType;
+use crate::{map::TileType, utils::debug_to_terminal::debug_to_terminal};
 use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
@@ -70,11 +70,11 @@ impl Base {
             }
         }
 
-        debug_println!(
+        debug_to_terminal(&format!(
             "📡 Base a reçu {} minerais et {} sources d’énergie !",
             self.discovered_minerals.len(),
             self.discovered_energy.len()
-        );
+        ));
     }
 
     pub fn receive_inventory(
@@ -98,17 +98,15 @@ impl Base {
             }
         }
 
-        debug_println!(
+        debug_to_terminal(&format!(
             "🧳 Base a reçu {} minerais et {} sources d’énergie !",
-            mineral_count,
-            energy_count
-        );
+            mineral_count, energy_count
+        ));
 
-        debug_println!(
+        debug_to_terminal(&format!(
             "📦 Inventaire total → Minerais: {}, Énergie: {}",
-            self.stored_minerals,
-            self.stored_energy
-        );
+            self.stored_minerals, self.stored_energy
+        ));
     }
 
     pub fn get_mineral_target(&mut self) -> Option<(usize, usize)> {

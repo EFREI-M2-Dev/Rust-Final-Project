@@ -1,6 +1,8 @@
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 
+use crate::utils::debug_to_terminal::debug_to_terminal;
+
 use super::{base::Base, TileType};
 
 #[derive(Debug)]
@@ -65,7 +67,7 @@ impl Robot {
                 if self.returning_to_base {
                     self.move_towards(self.base.0, self.base.1, grid, width, height);
                     if self.x == self.base.0 && self.y == self.base.1 {
-                        debug_println!("📡 Transmission des données à la base !");
+                        debug_to_terminal("📡 Transmission des données à la base !");
                         base.receive_resources(
                             self.discovered_minerals.clone(),
                             self.discovered_energy.clone(),
@@ -93,7 +95,7 @@ impl Robot {
                                 && !self.discovered_minerals.contains(&(nx, ny))
                             {
                                 self.discovered_minerals.push((nx, ny));
-                                debug_println!("💎 Minéral découvert à ({}, {})", nx, ny);
+                                debug_to_terminal(&format!("💎 Minéral découvert à ({}, {})", nx, ny));
                                 self.returning_to_base = true;
                                 return;
                             }
@@ -102,7 +104,7 @@ impl Robot {
                                 && !self.discovered_energy.contains(&(nx, ny))
                             {
                                 self.discovered_energy.push((nx, ny));
-                                debug_println!("⚡ Source d’énergie trouvée à ({}, {})", nx, ny);
+                                debug_to_terminal(&format!("⚡ Source d’énergie trouvée à ({}, {})", nx, ny));
                                 self.returning_to_base = true;
                                 return;
                             }
@@ -155,9 +157,9 @@ impl Robot {
                 if self.returning_to_base {
                     self.move_towards(self.base.0, self.base.1, grid, width, height);
                     if self.x == self.base.0 && self.y == self.base.1 {
-                        debug_println!(
+                        debug_to_terminal(&format!(
                             "🏠 Robot Collector a déposé {} ressources à la base !",
-                            self.inventory.len()
+                            self.inventory.len())
                         );
 
                         let mineral_count = self
@@ -187,12 +189,12 @@ impl Robot {
 
                 if self.target.is_none() {
                     if let Some(mineral_pos) = base.get_mineral_target() {
-                        debug_println!("🎯 Nouveau minerai assigné au robot : {:?}", mineral_pos);
+                        debug_to_terminal(&format!("🎯 Nouveau minerai assigné au robot : {:?}", mineral_pos));
                         self.target = Some(mineral_pos);
                     } else if let Some(energy_pos) = base.get_energy_target() {
-                        debug_println!(
+                        debug_to_terminal(&format!(
                             "⚡ Nouvelle source d’énergie assignée au robot : {:?}",
-                            energy_pos
+                            energy_pos)
                         );
                         self.target = Some(energy_pos);
                     }
@@ -213,13 +215,13 @@ impl Robot {
                             && (grid[*ny][*nx] == TileType::Mineral
                                 || grid[*ny][*nx] == TileType::Energy)
                         {
-                            debug_println!("🛠️ Ressource collectée à ({}, {})", *nx, *ny);
+                            debug_to_terminal(&format!("🛠️ Ressource collectée à ({}, {})", *nx, *ny));
 
                             self.inventory.push(grid[*ny][*nx]);
                             grid[*ny][*nx] = TileType::Empty;
 
                             if self.inventory.len() >= self.max_capacity {
-                                debug_println!("📦 Inventaire plein ! Retour à la base...");
+                                debug_to_terminal("📦 Inventaire plein ! Retour à la base...");
                                 self.returning_to_base = true;
                             } else {
                                 self.target = None;

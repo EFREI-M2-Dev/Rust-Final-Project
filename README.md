@@ -1,6 +1,6 @@
 # 🦀 Rust Projet Final
 
-## 📦 Installation
+## Installation
 
 ```bash
 git clone https://github.com/EFREI-M2-Dev/Rust-Final-Project.git
@@ -10,22 +10,41 @@ bash setup_git_hook.sh
 
 ---
 
-## 🛠️ Commands
+## Commands
 
-### 🔨 Build
+### Build
 
 ```bash
 cargo build
 ```
 
-### ▶️ Run
+### Run
 
 ```bash
 cargo run
 ```
 
-### 🧪 Test
+### Test
 
 ```bash
 cargo test
 ```
+
+## Debug
+
+To enable debugging, follow these steps:
+
+1. **Open two terminals**:
+
+    - In the **first terminal**, execute the `tty` command to identify the correct terminal path.
+    - Copy the value of the terminal path from the output and paste it into the `tty_path` field in `config.toml`.
+
+2. **Execute the program**:
+
+    - In the **second terminal**, run the program as usual by executing:
+
+        ```
+        cargo run
+        ```
+
+    This will ensure the application sends debug messages to the specified terminal.
