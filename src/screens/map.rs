@@ -127,7 +127,7 @@ impl<'a> Map<'a> {
     }
 
     pub fn update(&mut self) {
-        let mut base = self.base_map.base.clone(); 
+        let mut base = self.base_map.base.clone();
         self.base_map.update_robots(&mut base);
     }
 
