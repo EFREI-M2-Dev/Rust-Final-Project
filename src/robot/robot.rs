@@ -1,9 +1,10 @@
 use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng};
+use rand::SeedableRng;
 
+use super::collector::Collector;
+use super::explorator::Explorator;
 use super::robot_type::RobotType;
 use crate::map::{base::Base, TileType};
-use crate::utils::debug_to_terminal::debug_to_terminal;
 
 #[derive(Debug)]
 pub struct Robot {
@@ -55,195 +56,17 @@ impl Robot {
         height: usize,
         base: &mut Base,
     ) {
-        let directions = [(0, 1), (0, -1), (1, 0), (-1, 0)];
-
         match self.robot_type {
             RobotType::Explorator => {
-                if self.returning_to_base {
-                    self.move_towards(self.base.0, self.base.1, grid, width, height);
-                    if self.x == self.base.0 && self.y == self.base.1 {
-                        debug_to_terminal("📡 Transmission des données à la base !");
-                        base.receive_resources(
-                            self.discovered_minerals.clone(),
-                            self.discovered_energy.clone(),
-                        );
-                        self.returning_to_base = false;
-                    }
-                    return;
-                }
-
-                let mut best_x = self.x;
-                let mut best_y = self.y;
-                let mut found_new_tile = false;
-
-                let radius = 3;
-                for dy in -radius..=radius {
-                    for dx in -radius..=radius {
-                        let nx = self.x as isize + dx;
-                        let ny = self.y as isize + dy;
-
-                        if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
-                            let nx = nx as usize;
-                            let ny = ny as usize;
-
-                            if grid[ny][nx] == TileType::Mineral
-                                && !self.discovered_minerals.contains(&(nx, ny))
-                            {
-                                self.discovered_minerals.push((nx, ny));
-                                debug_to_terminal(&format!(
-                                    "💎 Minéral découvert à ({}, {})",
-                                    nx, ny
-                                ));
-                                self.returning_to_base = true;
-                                return;
-                            }
-
-                            if grid[ny][nx] == TileType::Energy
-                                && !self.discovered_energy.contains(&(nx, ny))
-                            {
-                                self.discovered_energy.push((nx, ny));
-                                debug_to_terminal(&format!(
-                                    "⚡ Source d’énergie trouvée à ({}, {})",
-                                    nx, ny
-                                ));
-                                self.returning_to_base = true;
-                                return;
-                            }
-                        }
-                    }
-                }
-
-                for (dx, dy) in directions.iter() {
-                    let nx = self.x as isize + dx;
-                    let ny = self.y as isize + dy;
-
-                    if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
-                        let nx = nx as usize;
-                        let ny = ny as usize;
-
-                        if !self.visited_map[ny][nx] && grid[ny][nx] == TileType::Empty {
-                            best_x = nx;
-                            best_y = ny;
-                            found_new_tile = true;
-                            break;
-                        }
-                    }
-                }
-
-                if !found_new_tile {
-                    for _ in 0..10 {
-                        let (dx, dy) = directions[self.rng.gen_range(0..4)];
-                        let nx = self.x as isize + dx;
-                        let ny = self.y as isize + dy;
-
-                        if nx >= 0 && ny >= 0 && nx < width as isize && ny < height as isize {
-                            let nx = nx as usize;
-                            let ny = ny as usize;
-
-                            if grid[ny][nx] == TileType::Empty {
-                                best_x = nx;
-                                best_y = ny;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                self.x = best_x;
-                self.y = best_y;
-                self.visited_map[self.y][self.x] = true;
+                Explorator::move_robot(self, grid, width, height, base);
             }
-
             RobotType::Collector => {
-                if self.returning_to_base {
-                    self.move_towards(self.base.0, self.base.1, grid, width, height);
-                    if self.x == self.base.0 && self.y == self.base.1 {
-                        debug_to_terminal(&format!(
-                            "🏠 Robot Collector a déposé {} ressources à la base !",
-                            self.inventory.len()
-                        ));
-
-                        let mineral_count = self
-                            .inventory
-                            .iter()
-                            .filter(|&&r| r == TileType::Mineral)
-                            .count();
-                        let energy_count = self
-                            .inventory
-                            .iter()
-                            .filter(|&&r| r == TileType::Energy)
-                            .count();
-                        let mut ressources_deposited: Vec<(usize, usize)> =
-                            self.inventory.iter().map(|_| (self.x, self.y)).collect();
-
-                        base.receive_inventory(
-                            mineral_count,
-                            energy_count,
-                            &mut ressources_deposited,
-                        );
-                        self.inventory.clear();
-                        self.returning_to_base = false;
-                        self.target = None;
-                    }
-                    return;
-                }
-
-                if self.target.is_none() {
-                    if let Some(mineral_pos) = base.get_mineral_target() {
-                        debug_to_terminal(&format!(
-                            "🎯 Nouveau minerai assigné au robot : {:?}",
-                            mineral_pos
-                        ));
-                        self.target = Some(mineral_pos);
-                    } else if let Some(energy_pos) = base.get_energy_target() {
-                        debug_to_terminal(&format!(
-                            "⚡ Nouvelle source d’énergie assignée au robot : {:?}",
-                            energy_pos
-                        ));
-                        self.target = Some(energy_pos);
-                    }
-                }
-
-                let (tx, ty) = self.target.unwrap_or(self.base);
-
-                let adjacent_positions = [
-                    (self.x.wrapping_sub(1), self.y),
-                    (self.x + 1, self.y),
-                    (self.x, self.y.wrapping_sub(1)),
-                    (self.x, self.y + 1),
-                ];
-
-                for (nx, ny) in adjacent_positions.iter() {
-                    if *nx < width && *ny < height {
-                        if (*nx, *ny) == (tx, ty)
-                            && (grid[*ny][*nx] == TileType::Mineral
-                                || grid[*ny][*nx] == TileType::Energy)
-                        {
-                            debug_to_terminal(&format!(
-                                "🛠️ Ressource collectée à ({}, {})",
-                                *nx, *ny
-                            ));
-
-                            self.inventory.push(grid[*ny][*nx]);
-                            grid[*ny][*nx] = TileType::Empty;
-
-                            if self.inventory.len() >= self.max_capacity {
-                                debug_to_terminal("📦 Inventaire plein ! Retour à la base...");
-                                self.returning_to_base = true;
-                            } else {
-                                self.target = None;
-                            }
-                            return;
-                        }
-                    }
-                }
-
-                self.move_towards(tx, ty, grid, width, height);
+                Collector::move_robot(self, grid, width, height, base);
             }
         }
     }
 
-    fn move_towards(
+    pub fn move_towards(
         &mut self,
         tx: usize,
         ty: usize,
