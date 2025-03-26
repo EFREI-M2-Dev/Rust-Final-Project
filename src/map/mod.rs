@@ -1,5 +1,4 @@
 use base::Base;
-use ratatui::style::Color;
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
 
@@ -7,46 +6,9 @@ use crate::robot::{Robot, RobotType};
 pub mod base;
 pub mod generator;
 pub mod modifier;
+pub mod tile_type;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum TileType {
-    Empty,
-    Mountain,
-    Mineral,
-    Water,
-    Sand,
-    Base,
-    Energy,
-    Interest,
-}
-
-impl TileType {
-    pub fn to_char(&self) -> char {
-        match self {
-            TileType::Empty => ' ',
-            TileType::Mountain => '^',
-            TileType::Mineral => 'M',
-            TileType::Water => '~',
-            TileType::Sand => '.',
-            TileType::Base => 'B',
-            TileType::Energy => 'E',
-            TileType::Interest => 'I',
-        }
-    }
-
-    pub fn to_color(&self) -> Color {
-        match self {
-            TileType::Empty => Color::Reset,
-            TileType::Mountain => Color::Rgb(156, 81, 23),
-            TileType::Mineral => Color::Yellow,
-            TileType::Water => Color::Blue,
-            TileType::Sand => Color::Rgb(194, 178, 128),
-            TileType::Base => Color::Rgb(250, 90, 218),
-            TileType::Energy => Color::Rgb(250, 90, 218),
-            TileType::Interest => Color::Rgb(250, 90, 218),
-        }
-    }
-}
+pub use tile_type::TileType;
 
 #[derive(Debug)]
 pub struct Map {
@@ -133,26 +95,6 @@ impl Map {
         let updates = Arc::try_unwrap(updates).unwrap().into_inner().unwrap();
         for (x, y) in updates {
             self.reveal_area(x, y);
-        }
-    }
-
-    pub fn print(&self) {
-        for y in 0..self.height {
-            for x in 0..self.width {
-                if self.fog[y][x] {
-                    if let Some(robot) = self.robots.iter().find(|r| r.x == x && r.y == y) {
-                        match robot.robot_type {
-                            RobotType::Explorator => print!("R"),
-                            RobotType::Collector => print!("C"),
-                        }
-                    } else {
-                        print!("{}", self.grid[y][x].to_char());
-                    }
-                } else {
-                    print!("#");
-                }
-            }
-            println!();
         }
     }
 }

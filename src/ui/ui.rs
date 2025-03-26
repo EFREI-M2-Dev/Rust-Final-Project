@@ -1,5 +1,4 @@
 use crate::map::Map;
-use crate::robot::RobotType;
 use crossterm::{
     event::{self, KeyCode, KeyEvent, KeyModifiers},
     execute,
@@ -24,30 +23,30 @@ pub fn teardown_terminal(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> i
 }
 
 pub fn draw_map(frame: &mut Frame, map: &Map) {
-    let map_str: Vec<String> = map
+    let styled_map_str: Vec<Line<'_>> = map
         .grid
         .iter()
         .enumerate()
         .map(|(y, row)| {
-            row.iter()
-                .enumerate()
-                .map(|(x, tile)| {
+            let mut line = Line::default();
+            row.iter().enumerate().for_each(|(x, tile)| {
+                let (ch, color) =
                     if let Some(robot) = map.robots.iter().find(|r| r.x == x && r.y == y) {
-                        match robot.robot_type {
-                            RobotType::Explorator => "R".to_string(),
-                            RobotType::Collector => "C".to_string(),
-                        }
+                        (robot.robot_type.to_char(), robot.robot_type.to_color())
                     } else if map.fog[y][x] {
-                        tile.to_char().to_string()
+                        (tile.to_char(), tile.to_color())
                     } else {
-                        "#".to_string()
-                    }
-                })
-                .collect()
+                        ('#', Color::Reset)
+                    };
+
+                line.spans
+                    .push(Span::styled(ch.to_string(), Style::default().fg(color)));
+            });
+            line
         })
         .collect();
 
-    let text = Paragraph::new(map_str.join("\n"))
+    let text = Paragraph::new(styled_map_str)
         .block(Block::default().title(" Carte ").borders(Borders::ALL));
 
     let area = frame.size();
