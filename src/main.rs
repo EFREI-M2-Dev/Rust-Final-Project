@@ -8,6 +8,7 @@ macro_rules! debug_println {
 }
 
 mod map;
+mod utils;
 
 use crate::map::base::Base;
 use crate::map::generator::generate_map;

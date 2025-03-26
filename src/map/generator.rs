@@ -1,4 +1,5 @@
 use super::{Map, MapModifier, TileType};
+use crate::utils::debug_to_terminal::debug_to_terminal;
 use noise::{NoiseFn, Perlin};
 
 const SCALE: f64 = 0.05;
@@ -29,6 +30,8 @@ pub fn generate_base_map(width: usize, height: usize, seed: u32) -> Map {
             map.grid[y][x] = tile_type;
         }
     }
+
+    debug_to_terminal("map généré");
 
     map
 }

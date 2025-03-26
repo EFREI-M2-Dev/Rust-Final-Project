@@ -100,12 +100,14 @@ impl Base {
 
         debug_println!(
             "🧳 Base a reçu {} minerais et {} sources d’énergie !",
-            mineral_count, energy_count
+            mineral_count,
+            energy_count
         );
 
         debug_println!(
             "📦 Inventaire total → Minerais: {}, Énergie: {}",
-            self.stored_minerals, self.stored_energy
+            self.stored_minerals,
+            self.stored_energy
         );
     }
 
