@@ -1,31 +1,25 @@
 mod map;
 mod robot;
+mod ui;
 mod utils;
 
 use crate::map::base::Base;
 use crate::map::generator::generate_map;
 use crate::map::modifier::{add_base, add_random_elements};
 use crate::map::TileType;
-
-use crossterm::{
-    event::{self, KeyCode, KeyEvent, KeyModifiers},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use ratatui::{prelude::*, widgets::*};
-use robot::RobotType;
-use std::io::{self, stdout};
+use crate::ui::{draw_map, handle_input, setup_terminal, teardown_terminal};
+use crate::utils::config::Config;
+use std::io;
 
 fn main() -> io::Result<()> {
-    enable_raw_mode()?;
-    let mut stdout = stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let config =
+        Config::from_file("config.toml").expect("Erreur de chargement du fichier de configuration");
 
-    let width = 100;
-    let height = 30;
-    let seed = 57;
+    let width = config.map.width;
+    let height = config.map.height;
+    let seed = config.map.seed;
+
+    let mut terminal = setup_terminal()?;
 
     let mut map = generate_map(width, height, seed, vec![]);
 
@@ -48,50 +42,11 @@ fn main() -> io::Result<()> {
 
         terminal.draw(|f| draw_map(f, &map)).unwrap();
 
-        if event::poll(std::time::Duration::from_millis(100))? {
-            if let event::Event::Key(KeyEvent {
-                code: KeyCode::Char('q'),
-                modifiers: KeyModifiers::NONE,
-                ..
-            }) = event::read()?
-            {
-                break;
-            }
+        if handle_input() {
+            break;
         }
     }
 
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+    teardown_terminal(&mut terminal)?;
     Ok(())
-}
-
-fn draw_map(frame: &mut Frame, map: &map::Map) {
-    let map_str: Vec<String> = map
-        .grid
-        .iter()
-        .enumerate()
-        .map(|(y, row)| {
-            row.iter()
-                .enumerate()
-                .map(|(x, tile)| {
-                    if let Some(robot) = map.robots.iter().find(|r| r.x == x && r.y == y) {
-                        match robot.robot_type {
-                            RobotType::Explorator => "R".to_string(),
-                            RobotType::Collector => "C".to_string(),
-                        }
-                    } else if map.fog[y][x] {
-                        tile.to_char().to_string()
-                    } else {
-                        "#".to_string()
-                    }
-                })
-                .collect()
-        })
-        .collect();
-
-    let text = Paragraph::new(map_str.join("\n"))
-        .block(Block::default().title(" Carte ").borders(Borders::ALL));
-
-    let area = frame.size();
-    frame.render_widget(text, area);
 }
