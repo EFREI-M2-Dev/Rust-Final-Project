@@ -70,7 +70,7 @@ impl Base {
             }
         }
 
-        println!(
+        debug_println!(
             "📡 Base a reçu {} minerais et {} sources d’énergie !",
             self.discovered_minerals.len(),
             self.discovered_energy.len()
@@ -98,12 +98,12 @@ impl Base {
             }
         }
 
-        println!(
+        debug_println!(
             "🧳 Base a reçu {} minerais et {} sources d’énergie !",
             mineral_count, energy_count
         );
 
-        println!(
+        debug_println!(
             "📦 Inventaire total → Minerais: {}, Énergie: {}",
             self.stored_minerals, self.stored_energy
         );
