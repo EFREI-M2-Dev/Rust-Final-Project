@@ -1,14 +1,12 @@
 use base::Base;
 use ratatui::style::Color;
 use rayon::prelude::*;
+use robot::{Robot, RobotType};
 use std::sync::{Arc, Mutex};
-
 pub mod base;
 pub mod generator;
 pub mod modifier;
-mod robot;
-
-use robot::{Robot, RobotType};
+pub mod robot;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileType {
@@ -57,18 +55,24 @@ pub struct Map {
     pub grid: Vec<Vec<TileType>>,
     pub robots: Vec<Robot>,
     pub fog: Vec<Vec<bool>>,
+    pub base: Base,
 }
 
 impl Map {
     pub fn new(width: usize, height: usize) -> Self {
         let grid = vec![vec![TileType::Empty; width]; height];
         let fog = vec![vec![false; width]; height];
+        let base_position =
+            Base::find_free_position(&grid).expect("Aucune place libre pour la base !");
+        let base = Base::new(base_position.0, base_position.1);
+
         Map {
             width,
             height,
             grid,
             robots: vec![],
             fog,
+            base,
         }
     }
 
@@ -87,7 +91,7 @@ impl Map {
             RobotType::Collector,
             self.width,
             self.height,
-            seed,
+            seed + 1,
         ));
         self.reveal_area(x, y);
     }

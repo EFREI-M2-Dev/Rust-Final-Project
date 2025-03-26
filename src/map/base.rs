@@ -1,7 +1,7 @@
 use crate::map::TileType;
 use std::collections::HashSet;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Base {
     pub x: usize,
     pub y: usize,
