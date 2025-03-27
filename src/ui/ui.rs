@@ -73,7 +73,7 @@ pub fn draw_map(frame: &mut Frame, map: &Map, base: &mut Base, _show_popup: bool
         let inventory = base.get_inventory();
 
         debug_to_terminal(&format!(
-            "🎯 Inventaire actuel de la base : {:?}",
+            "[Base] \tInventaire actuel de la base : {:?}",
             inventory
         ));
 

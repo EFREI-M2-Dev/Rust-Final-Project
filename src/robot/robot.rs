@@ -85,7 +85,6 @@ impl Robot {
         let mut best_x = self.x;
         let mut best_y = self.y;
         let mut min_distance = usize::MAX;
-        let mut found_new_tile = false;
 
         for (dx, dy) in directions.iter() {
             let nx = self.x as isize + dx;
@@ -103,7 +102,6 @@ impl Robot {
                         best_x = nx;
                         best_y = ny;
                         min_distance = distance;
-                        found_new_tile = true;
                     }
                 }
             }

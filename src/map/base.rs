@@ -81,7 +81,7 @@ impl Base {
         }
 
         debug_to_terminal(&format!(
-            "📡 Base a découvert au total: {} minerais, {} sources d’énergie et {} plans scientifiques !",
+            "[Base] \tDécouvert au total: {} minerais, {} sources d’énergie et {} plans scientifiques !",
             self.discovered_minerals.len(),
             self.discovered_energy.len(),
             self.discovered_plans.len()
@@ -118,12 +118,12 @@ impl Base {
         }
 
         debug_to_terminal(&format!(
-            "🧳 Base a reçu {} minerais, {} sources d’énergie et {} découvertes scientifiques !",
+            "[Base] \tA reçu {} minerais, {} sources d’énergie et {} découvertes scientifiques !",
             mineral_count, energy_count, plan_count
         ));
 
         debug_to_terminal(&format!(
-            "📦 Inventaire total → Minerais: {}, Énergie: {}, Plans: {}",
+            "[Base] \tInventaire total → Minerais: {}, Énergie: {}, Plans: {}",
             self.stored_minerals, self.stored_energy, self.stored_plans
         ));
     }

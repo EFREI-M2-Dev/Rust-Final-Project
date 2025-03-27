@@ -16,7 +16,7 @@ impl Scientist {
             robot.move_towards(robot.base.0, robot.base.1, grid, width, height);
             if robot.x == robot.base.0 && robot.y == robot.base.1 {
                 debug_to_terminal(&format!(
-                    "🏠 Robot Scientist à découvert le point d'intéret {} et à ramener le plan à la base !",
+                    "[Scientist] \tDécouvert le point d'intéret {} et à ramener le plan à la base !",
                     robot.inventory.len()
                 ));
 
@@ -44,7 +44,7 @@ impl Scientist {
         if robot.target.is_none() {
             if let Some(interest_point_pos) = base.get_plan_target() {
                 debug_to_terminal(&format!(
-                    "🎯 Nouveau point d'intéret assigné au robot : {:?}",
+                    "[Scientist] \tNouveau point d'intéret assigné au robot : {:?}",
                     interest_point_pos
                 ));
                 robot.target = Some(interest_point_pos);
@@ -64,7 +64,7 @@ impl Scientist {
             if *nx < width && *ny < height {
                 if (*nx, *ny) == (tx, ty) && (grid[*ny][*nx] == TileType::Interest) {
                     debug_to_terminal(&format!(
-                        "🧪 Plan scientifique collectée à ({}, {})",
+                        "[Scientist] \tPlan scientifique collectée à ({}, {})",
                         *nx, *ny
                     ));
 
@@ -72,7 +72,7 @@ impl Scientist {
                     grid[*ny][*nx] = TileType::Empty;
 
                     if robot.inventory.len() >= robot.max_capacity {
-                        debug_to_terminal("📦 Inventaire plein ! Retour à la base...");
+                        debug_to_terminal("[Scientist] \tInventaire plein ! Retour à la base...");
                         robot.returning_to_base = true;
                     } else {
                         robot.target = None;

@@ -16,7 +16,7 @@ impl Collector {
             robot.move_towards(robot.base.0, robot.base.1, grid, width, height);
             if robot.x == robot.base.0 && robot.y == robot.base.1 {
                 debug_to_terminal(&format!(
-                    "🏠 Robot Collector a déposé {} ressources à la base !",
+                    "[Collector] \tDéposé {} ressources à la base !",
                     robot.inventory.len()
                 ));
 
@@ -44,13 +44,13 @@ impl Collector {
         if robot.target.is_none() {
             if let Some(mineral_pos) = base.get_mineral_target() {
                 debug_to_terminal(&format!(
-                    "🎯 Nouveau minerai assigné au robot : {:?}",
+                    "[Collector] \tNouveau minerai assigné au robot : {:?}",
                     mineral_pos
                 ));
                 robot.target = Some(mineral_pos);
             } else if let Some(energy_pos) = base.get_energy_target() {
                 debug_to_terminal(&format!(
-                    "⚡ Nouvelle source d’énergie assignée au robot : {:?}",
+                    "[Collector] \tNouvelle source d’énergie assignée au robot : {:?}",
                     energy_pos
                 ));
                 robot.target = Some(energy_pos);
@@ -71,13 +71,16 @@ impl Collector {
                 if (*nx, *ny) == (tx, ty)
                     && (grid[*ny][*nx] == TileType::Mineral || grid[*ny][*nx] == TileType::Energy)
                 {
-                    debug_to_terminal(&format!("🛠️ Ressource collectée à ({}, {})", *nx, *ny));
+                    debug_to_terminal(&format!(
+                        "[Collector] \tRessource collectée à ({}, {})",
+                        *nx, *ny
+                    ));
 
                     robot.inventory.push(grid[*ny][*nx]);
                     grid[*ny][*nx] = TileType::Empty;
 
                     if robot.inventory.len() >= robot.max_capacity {
-                        debug_to_terminal("📦 Inventaire plein ! Retour à la base...");
+                        debug_to_terminal("[Collector] \tInventaire plein ! Retour à la base...");
                         robot.returning_to_base = true;
                     } else {
                         robot.target = None;

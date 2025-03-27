@@ -17,7 +17,7 @@ impl Explorator {
         if robot.returning_to_base {
             robot.move_towards(robot.base.0, robot.base.1, grid, width, height);
             if robot.x == robot.base.0 && robot.y == robot.base.1 {
-                debug_to_terminal("📡 Transmission des données à la base !");
+                debug_to_terminal("[Explorator] \tTransmission des données à la base !");
                 base.receive_resources(
                     robot.discovered_minerals.clone(),
                     robot.discovered_energy.clone(),
@@ -30,7 +30,7 @@ impl Explorator {
 
         let mut best_x = robot.x;
         let mut best_y = robot.y;
-        let mut found_new_tile = false;
+        let mut max_distance = 0;
 
         let radius = 3;
         for dy in -radius..=radius {
@@ -46,7 +46,10 @@ impl Explorator {
                         && !robot.discovered_minerals.contains(&(nx, ny))
                     {
                         robot.discovered_minerals.push((nx, ny));
-                        debug_to_terminal(&format!("💎 Minéral découvert à ({}, {})", nx, ny));
+                        debug_to_terminal(&format!(
+                            "[Explorator] \tMinéral découvert à ({}, {})",
+                            nx, ny
+                        ));
                         robot.returning_to_base = true;
                         return;
                     }
@@ -56,7 +59,7 @@ impl Explorator {
                     {
                         robot.discovered_energy.push((nx, ny));
                         debug_to_terminal(&format!(
-                            "⚡ Source d’énergie trouvée à ({}, {})",
+                            "[Explorator] \tSource d’énergie trouvée à ({}, {})",
                             nx, ny
                         ));
                         robot.returning_to_base = true;
@@ -66,7 +69,7 @@ impl Explorator {
                     if grid[ny][nx] == TileType::Interest {
                         robot.discovered_plan.push((nx, ny));
                         debug_to_terminal(&format!(
-                            "🧪 Point d'intérêt découvert à ({}, {})",
+                            "[Explorator] \tPoint d'intérêt découvert à ({}, {})",
                             nx, ny
                         ));
                         robot.returning_to_base = true;
@@ -86,16 +89,21 @@ impl Explorator {
                 let nx = nx as usize;
                 let ny = ny as usize;
 
-                if !robot.visited_map[ny][nx] && grid[ny][nx] == TileType::Empty {
+                let distance_to_base = (nx as isize - robot.base.0 as isize).abs() as usize
+                    + (ny as isize - robot.base.1 as isize).abs() as usize;
+
+                if !robot.visited_map[ny][nx]
+                    && grid[ny][nx] == TileType::Empty
+                    && distance_to_base > max_distance
+                {
                     best_x = nx;
                     best_y = ny;
-                    found_new_tile = true;
-                    break;
+                    max_distance = distance_to_base;
                 }
             }
         }
 
-        if !found_new_tile {
+        if max_distance == 0 {
             for _ in 0..10 {
                 let (dx, dy) = directions[robot.rng.gen_range(0..4)];
                 let nx = robot.x as isize + dx;
