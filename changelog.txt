@@ -1,5 +1,11 @@
 Changelog
 
+Version 1.1.0
+
+- feat(scientist): add robot scientist
+- chore: add changelog
+- feat(ui): dynamic map size
+
 Version 1.0.0
 
 - refactor(map): add map.rs
