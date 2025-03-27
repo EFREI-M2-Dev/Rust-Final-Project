@@ -11,16 +11,12 @@ pub struct Map {
     pub grid: Vec<Vec<TileType>>,
     pub robots: Vec<Robot>,
     pub fog: Vec<Vec<bool>>,
-    pub base: Base,
 }
 
 impl Map {
     pub fn new(width: usize, height: usize) -> Self {
         let grid = vec![vec![TileType::Empty; width]; height];
         let fog = vec![vec![false; width]; height];
-        let base_position =
-            Base::find_free_position(&grid).expect("Aucune place libre pour la base !");
-        let base = Base::new(base_position.0, base_position.1);
 
         Map {
             width,
@@ -28,7 +24,6 @@ impl Map {
             grid,
             robots: vec![],
             fog,
-            base,
         }
     }
 
