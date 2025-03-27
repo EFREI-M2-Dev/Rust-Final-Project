@@ -49,7 +49,9 @@ fn main() -> io::Result<()> {
     loop {
         map.update_robots(&mut base);
 
-        terminal.draw(|f| draw_map(f, &map, show_popup)).unwrap();
+        terminal
+            .draw(|f| draw_map(f, &map, &mut base, show_popup))
+            .unwrap();
 
         match handle_input() {
             UserAction::Quit => break,

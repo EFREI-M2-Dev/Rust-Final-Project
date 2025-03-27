@@ -81,7 +81,7 @@ impl Base {
         }
 
         debug_to_terminal(&format!(
-            "📡 Base a reçu {} minerais, {} sources d’énergie et {} plans scientifiques !",
+            "📡 Base a découvert au total: {} minerais, {} sources d’énergie et {} plans scientifiques !",
             self.discovered_minerals.len(),
             self.discovered_energy.len(),
             self.discovered_plans.len()
@@ -156,6 +156,10 @@ impl Base {
             }
         }
         None
+    }
+
+    pub fn get_inventory(&mut self) -> (usize, usize, usize) {
+        (self.stored_minerals, self.stored_energy, self.stored_plans)
     }
 
     pub fn new(x: usize, y: usize) -> Self {

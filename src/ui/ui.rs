@@ -1,5 +1,7 @@
+use crate::map::base::Base;
 use crate::map::Map;
 use crate::ui::centered_rect::centered_rect;
+use crate::utils::debug_to_terminal::debug_to_terminal;
 use crossterm::{
     event::{self, KeyCode},
     execute,
@@ -29,7 +31,7 @@ pub fn teardown_terminal(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> i
     Ok(())
 }
 
-pub fn draw_map(frame: &mut Frame, map: &Map, _show_popup: bool) {
+pub fn draw_map(frame: &mut Frame, map: &Map, base: &mut Base, _show_popup: bool) {
     let styled_map_str: Vec<Line<'_>> = map
         .grid
         .iter()
@@ -53,7 +55,7 @@ pub fn draw_map(frame: &mut Frame, map: &Map, _show_popup: bool) {
         })
         .collect();
 
-    let instructions = Line::from(" Utiliser 'q' pour quitter ".red());
+    let instructions = Line::from(" Tab: menu - q: exit ".red());
 
     let text = Paragraph::new(styled_map_str).block(
         Block::default()
@@ -67,11 +69,26 @@ pub fn draw_map(frame: &mut Frame, map: &Map, _show_popup: bool) {
 
     if _show_popup {
         let area = centered_rect(60, 20, frame.size());
+
+        let inventory = base.get_inventory();
+
+        debug_to_terminal(&format!(
+            "🎯 Inventaire actuel de la base : {:?}",
+            inventory
+        ));
+
         let block = Block::default()
-            .title(" Fenêtre ")
+            .title(" Gestion de la base ")
             .borders(Borders::ALL)
             .style(Style::default().bg(Color::Black).fg(Color::White));
-        let text = Paragraph::new("Ceci est une fenêtre déclenchée par Tab").block(block);
+
+        let content = format!(
+            "Minerals : {}\nEnergy : {}\nPlans: {}",
+            inventory.0, inventory.1, inventory.2
+        );
+
+        let text = Paragraph::new(content).block(block);
+
         frame.render_widget(Clear, area);
         frame.render_widget(text, area);
     }
