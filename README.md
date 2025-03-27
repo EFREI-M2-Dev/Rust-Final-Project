@@ -48,3 +48,13 @@ To enable debugging, follow these steps:
         ```
 
     This will ensure the application sends debug messages to the specified terminal.
+
+## Changelog
+
+To generate the changelog:
+
+```sh
+sh generate_changelog.sh 1.0.0
+```
+
+> You need to verify and adjust the content of the changelog.

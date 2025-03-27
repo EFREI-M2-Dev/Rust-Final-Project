@@ -1,0 +1,53 @@
+Changelog
+
+Version 1.0.0
+
+- refactor(map): add map.rs
+- refactor(ui): add module
+- refactor(robot): modules Collector and Explorator
+- refactor: move useless code
+- refactor(robot): add module
+- refactor(utils): add config file
+- feat(debut_to_terminal): add method to debug in terminal
+- feat: add ui
+- fix(generate-map): use new function
+- fix(generate-map): use new function
+- feat(robot): add rayon for update
+- refactor(global): refactor global code to run project and re-establishment of ratatui
+- refactor(mod-map): remove hole
+- fix(robots-move): dont make same move twice
+- fix(robots-move): dont make same move twice
+- refactor(robot): add seed parameter
+- feat(robot): add discover radius
+- fix(collector): fetches resources already collected
+- fix(robot): duplicate logic
+- feat(map): add point of interest
+- refactor(robot): remove useless code
+- feat(robot): add inventory
+- feat(map): add energy
+- feat(robot): add collector target
+- feat(base): add mineral transmission
+- feat(robot): add mineral discovery and return to base logic
+- fix(map): improve base position
+- feat(base): add base
+- feat(robot): optimize exploration move
+- feat(collector): collect mineral and disappearance
+- feat(robot): add collector robot and print when explorator discovers minerals
+- feat: add fog
+- fix(screen): subtract with overflow
+- feat(base): edit color code & update size for better view
+- feat(map): add scrollable map function with viewport system + return back on key event
+- fix(main): launch interface
+- feat(module): logic module added
+- feat(resource): add
+- feat(map): add center base
+- refactor(map): ajust thresholds
+- refactor(map): color & map struct review
+- refactor(screens): counter remove + add color to tile
+- refactor(map): add seed in modifier
+- refacto: menu / screens tabs
+- refactor(map): modifier
+- feat(map): refactor map generation and add mineral modifier
+- feat: add map generator
+- feat(robots): implement robot types with task execution and battery management
+- feat(interface): base interface menu selection
