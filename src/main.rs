@@ -3,6 +3,8 @@ mod robot;
 mod ui;
 mod utils;
 
+use ui::ui::UserAction;
+
 use crate::map::base::Base;
 use crate::map::generator::generate_map;
 use crate::map::modifier::{add_base, add_random_elements};
@@ -12,6 +14,8 @@ use crate::utils::config::Config;
 use std::io;
 
 fn main() -> io::Result<()> {
+    let mut show_popup = false;
+
     let config =
         Config::from_file("config.toml").expect("Erreur de chargement du fichier de configuration");
 
@@ -45,10 +49,12 @@ fn main() -> io::Result<()> {
     loop {
         map.update_robots(&mut base);
 
-        terminal.draw(|f| draw_map(f, &map)).unwrap();
+        terminal.draw(|f| draw_map(f, &map, show_popup)).unwrap();
 
-        if handle_input() {
-            break;
+        match handle_input() {
+            UserAction::Quit => break,
+            UserAction::TogglePopup => show_popup = !show_popup,
+            UserAction::None => {}
         }
     }
 

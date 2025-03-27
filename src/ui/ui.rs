@@ -1,11 +1,18 @@
 use crate::map::Map;
+use crate::ui::centered_rect::centered_rect;
 use crossterm::{
-    event::{self, KeyCode, KeyEvent, KeyModifiers},
+    event::{self, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{prelude::*, widgets::*};
 use std::io::{self, stdout, Stdout};
+
+pub enum UserAction {
+    Quit,
+    TogglePopup,
+    None,
+}
 
 pub fn setup_terminal() -> io::Result<Terminal<CrosstermBackend<Stdout>>> {
     enable_raw_mode()?;
@@ -22,7 +29,7 @@ pub fn teardown_terminal(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> i
     Ok(())
 }
 
-pub fn draw_map(frame: &mut Frame, map: &Map) {
+pub fn draw_map(frame: &mut Frame, map: &Map, _show_popup: bool) {
     let styled_map_str: Vec<Line<'_>> = map
         .grid
         .iter()
@@ -57,18 +64,28 @@ pub fn draw_map(frame: &mut Frame, map: &Map) {
 
     let area = frame.size();
     frame.render_widget(text, area);
+
+    if _show_popup {
+        let area = centered_rect(60, 20, frame.size());
+        let block = Block::default()
+            .title(" Fenêtre ")
+            .borders(Borders::ALL)
+            .style(Style::default().bg(Color::Black).fg(Color::White));
+        let text = Paragraph::new("Ceci est une fenêtre déclenchée par Tab").block(block);
+        frame.render_widget(Clear, area);
+        frame.render_widget(text, area);
+    }
 }
 
-pub fn handle_input() -> bool {
+pub fn handle_input() -> UserAction {
     if event::poll(std::time::Duration::from_millis(100)).unwrap() {
-        if let event::Event::Key(KeyEvent {
-            code: KeyCode::Char('q'),
-            modifiers: KeyModifiers::NONE,
-            ..
-        }) = event::read().unwrap()
-        {
-            return true;
+        if let event::Event::Key(key) = event::read().unwrap() {
+            match key.code {
+                KeyCode::Char('q') => return UserAction::Quit,
+                KeyCode::Tab => return UserAction::TogglePopup,
+                _ => {}
+            }
         }
     }
-    false
+    UserAction::None
 }
