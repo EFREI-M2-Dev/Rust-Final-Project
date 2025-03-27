@@ -15,11 +15,16 @@ fn main() -> io::Result<()> {
     let config =
         Config::from_file("config.toml").expect("Erreur de chargement du fichier de configuration");
 
-    let width = config.map.width;
-    let height = config.map.height;
-    let seed = config.map.seed;
-
     let mut terminal = setup_terminal()?;
+
+    let size = terminal.size()?;
+    let mut width = size.width as usize;
+    let mut height = size.height as usize;
+
+    width = width - 3;
+    height = height - 2;
+
+    let seed = config.map.seed;
 
     let mut map = generate_map(width, height, seed, vec![]);
 

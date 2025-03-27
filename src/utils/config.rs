@@ -8,8 +8,6 @@ pub struct DebugConfig {
 
 #[derive(Debug, Deserialize)]
 pub struct MapConfig {
-    pub width: usize,
-    pub height: usize,
     pub seed: u32,
 }
 

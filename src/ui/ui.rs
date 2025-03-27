@@ -46,8 +46,14 @@ pub fn draw_map(frame: &mut Frame, map: &Map) {
         })
         .collect();
 
-    let text = Paragraph::new(styled_map_str)
-        .block(Block::default().title(" Carte ").borders(Borders::ALL));
+    let instructions = Line::from(" Utiliser 'q' pour quitter ".red());
+
+    let text = Paragraph::new(styled_map_str).block(
+        Block::default()
+            .title(" Carte ")
+            .title_bottom(instructions.centered())
+            .borders(Borders::ALL),
+    );
 
     let area = frame.size();
     frame.render_widget(text, area);

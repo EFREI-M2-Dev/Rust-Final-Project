@@ -44,10 +44,18 @@ impl Map {
         self.robots.push(Robot::new(
             x,
             y,
-            RobotType::Collector,
+            RobotType::Explorator,
             self.width,
             self.height,
             seed + 1,
+        ));
+        self.robots.push(Robot::new(
+            x,
+            y,
+            RobotType::Collector,
+            self.width,
+            self.height,
+            seed,
         ));
         self.reveal_area(x, y);
     }
