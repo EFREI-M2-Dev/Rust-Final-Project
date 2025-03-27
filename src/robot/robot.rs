@@ -4,6 +4,7 @@ use rand::SeedableRng;
 use super::collector::Collector;
 use super::explorator::Explorator;
 use super::robot_type::RobotType;
+use super::scientist::Scientist;
 use crate::map::{base::Base, TileType};
 
 #[derive(Debug)]
@@ -16,6 +17,7 @@ pub struct Robot {
     pub visited_map: Vec<Vec<bool>>,
     pub discovered_minerals: Vec<(usize, usize)>,
     pub discovered_energy: Vec<(usize, usize)>,
+    pub discovered_plan: Vec<(usize, usize)>,
     pub returning_to_base: bool,
     pub inventory: Vec<TileType>,
     pub max_capacity: usize,
@@ -41,6 +43,7 @@ impl Robot {
             visited_map: vec![vec![false; width]; height],
             discovered_minerals: Vec::new(),
             discovered_energy: Vec::new(),
+            discovered_plan: Vec::new(),
             returning_to_base: false,
             inventory: Vec::new(),
             max_capacity: 2,
@@ -62,6 +65,9 @@ impl Robot {
             }
             RobotType::Collector => {
                 Collector::move_robot(self, grid, width, height, base);
+            }
+            RobotType::Scientist => {
+                Scientist::move_robot(self, grid, width, height, base);
             }
         }
     }

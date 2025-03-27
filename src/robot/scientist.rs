@@ -2,9 +2,9 @@ use super::robot::Robot;
 use crate::map::{base::Base, TileType};
 use crate::utils::debug_to_terminal::debug_to_terminal;
 
-pub struct Collector;
+pub struct Scientist;
 
-impl Collector {
+impl Scientist {
     pub fn move_robot(
         robot: &mut Robot,
         grid: &mut Vec<Vec<TileType>>,
@@ -16,14 +16,14 @@ impl Collector {
             robot.move_towards(robot.base.0, robot.base.1, grid, width, height);
             if robot.x == robot.base.0 && robot.y == robot.base.1 {
                 debug_to_terminal(&format!(
-                    "🏠 Robot Collector a déposé {} ressources à la base !",
+                    "🏠 Robot Scientist à découvert le point d'intéret {} et à ramener le plan à la base !",
                     robot.inventory.len()
                 ));
 
-                let mineral_count = robot
+                let plan_count = robot
                     .inventory
                     .iter()
-                    .filter(|&&r| r == TileType::Mineral)
+                    .filter(|&&r| r == TileType::Interest)
                     .count();
                 let energy_count = robot
                     .inventory
@@ -33,7 +33,7 @@ impl Collector {
                 let mut ressources_deposited: Vec<(usize, usize)> =
                     robot.inventory.iter().map(|_| (robot.x, robot.y)).collect();
 
-                base.receive_inventory(mineral_count, energy_count, 0, &mut ressources_deposited);
+                base.receive_inventory(0, energy_count, plan_count, &mut ressources_deposited);
                 robot.inventory.clear();
                 robot.returning_to_base = false;
                 robot.target = None;
@@ -42,18 +42,12 @@ impl Collector {
         }
 
         if robot.target.is_none() {
-            if let Some(mineral_pos) = base.get_mineral_target() {
+            if let Some(interest_point_pos) = base.get_plan_target() {
                 debug_to_terminal(&format!(
-                    "🎯 Nouveau minerai assigné au robot : {:?}",
-                    mineral_pos
+                    "🎯 Nouveau point d'intéret assigné au robot : {:?}",
+                    interest_point_pos
                 ));
-                robot.target = Some(mineral_pos);
-            } else if let Some(energy_pos) = base.get_energy_target() {
-                debug_to_terminal(&format!(
-                    "⚡ Nouvelle source d’énergie assignée au robot : {:?}",
-                    energy_pos
-                ));
-                robot.target = Some(energy_pos);
+                robot.target = Some(interest_point_pos);
             }
         }
 
@@ -68,10 +62,11 @@ impl Collector {
 
         for (nx, ny) in adjacent_positions.iter() {
             if *nx < width && *ny < height {
-                if (*nx, *ny) == (tx, ty)
-                    && (grid[*ny][*nx] == TileType::Mineral || grid[*ny][*nx] == TileType::Energy)
-                {
-                    debug_to_terminal(&format!("🛠️ Ressource collectée à ({}, {})", *nx, *ny));
+                if (*nx, *ny) == (tx, ty) && (grid[*ny][*nx] == TileType::Interest) {
+                    debug_to_terminal(&format!(
+                        "🧪 Plan scientifique collectée à ({}, {})",
+                        *nx, *ny
+                    ));
 
                     robot.inventory.push(grid[*ny][*nx]);
                     grid[*ny][*nx] = TileType::Empty;

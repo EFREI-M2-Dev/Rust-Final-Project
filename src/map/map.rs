@@ -57,6 +57,14 @@ impl Map {
             self.height,
             seed,
         ));
+        self.robots.push(Robot::new(
+            x,
+            y,
+            RobotType::Scientist,
+            self.width,
+            self.height,
+            seed,
+        ));
         self.reveal_area(x, y);
     }
 

@@ -21,6 +21,7 @@ impl Explorator {
                 base.receive_resources(
                     robot.discovered_minerals.clone(),
                     robot.discovered_energy.clone(),
+                    robot.discovered_plan.clone(),
                 );
                 robot.returning_to_base = false;
             }
@@ -56,6 +57,16 @@ impl Explorator {
                         robot.discovered_energy.push((nx, ny));
                         debug_to_terminal(&format!(
                             "⚡ Source d’énergie trouvée à ({}, {})",
+                            nx, ny
+                        ));
+                        robot.returning_to_base = true;
+                        return;
+                    }
+
+                    if grid[ny][nx] == TileType::Interest {
+                        robot.discovered_plan.push((nx, ny));
+                        debug_to_terminal(&format!(
+                            "🧪 Point d'intérêt découvert à ({}, {})",
                             nx, ny
                         ));
                         robot.returning_to_base = true;

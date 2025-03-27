@@ -1,5 +1,5 @@
 [debug]
-tty_path = "/dev/ttys007"
+tty_path = "/dev/ttys009"
 
 [map]
 seed = 57

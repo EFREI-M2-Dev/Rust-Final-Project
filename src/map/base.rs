@@ -7,10 +7,13 @@ pub struct Base {
     pub y: usize,
     pub discovered_minerals: Vec<(usize, usize)>,
     pub discovered_energy: Vec<(usize, usize)>,
+    pub discovered_plans: Vec<(usize, usize)>,
     pub stored_minerals: usize,
     pub stored_energy: usize,
+    pub stored_plans: usize,
     collected_minerals: HashSet<(usize, usize)>,
     collected_energies: HashSet<(usize, usize)>,
+    collected_plans: HashSet<(usize, usize)>,
 }
 
 impl Base {
@@ -57,6 +60,7 @@ impl Base {
         &mut self,
         minerals: Vec<(usize, usize)>,
         energy: Vec<(usize, usize)>,
+        plans: Vec<(usize, usize)>,
     ) {
         for mineral in minerals {
             if !self.discovered_minerals.contains(&mineral) {
@@ -70,10 +74,17 @@ impl Base {
             }
         }
 
+        for plan in plans {
+            if !self.discovered_plans.contains(&plan) {
+                self.discovered_plans.push(plan);
+            }
+        }
+
         debug_to_terminal(&format!(
-            "📡 Base a reçu {} minerais et {} sources d’énergie !",
+            "📡 Base a reçu {} minerais, {} sources d’énergie et {} plans scientifiques !",
             self.discovered_minerals.len(),
-            self.discovered_energy.len()
+            self.discovered_energy.len(),
+            self.discovered_plans.len()
         ));
     }
 
@@ -81,10 +92,12 @@ impl Base {
         &mut self,
         mineral_count: usize,
         energy_count: usize,
+        plan_count: usize,
         ressources_deposited: &mut Vec<(usize, usize)>,
     ) {
         self.stored_minerals += mineral_count;
         self.stored_energy += energy_count;
+        self.stored_plans += plan_count;
 
         for _ in 0..mineral_count {
             if let Some((x, y)) = self.discovered_minerals.pop() {
@@ -98,14 +111,20 @@ impl Base {
             }
         }
 
+        for _ in 0..plan_count {
+            if let Some((x, y)) = self.discovered_plans.pop() {
+                ressources_deposited.push((x, y));
+            }
+        }
+
         debug_to_terminal(&format!(
-            "🧳 Base a reçu {} minerais et {} sources d’énergie !",
-            mineral_count, energy_count
+            "🧳 Base a reçu {} minerais, {} sources d’énergie et {} découvertes scientifiques !",
+            mineral_count, energy_count, plan_count
         ));
 
         debug_to_terminal(&format!(
-            "📦 Inventaire total → Minerais: {}, Énergie: {}",
-            self.stored_minerals, self.stored_energy
+            "📦 Inventaire total → Minerais: {}, Énergie: {}, Plans: {}",
+            self.stored_minerals, self.stored_energy, self.stored_plans
         ));
     }
 
@@ -129,16 +148,29 @@ impl Base {
         None
     }
 
+    pub fn get_plan_target(&mut self) -> Option<(usize, usize)> {
+        for (i, &plan) in self.discovered_plans.iter().enumerate() {
+            if !self.collected_plans.contains(&plan) {
+                self.collected_plans.insert(plan);
+                return Some(self.discovered_plans.remove(i));
+            }
+        }
+        None
+    }
+
     pub fn new(x: usize, y: usize) -> Self {
         Base {
             x,
             y,
             discovered_minerals: Vec::new(),
             discovered_energy: Vec::new(),
+            discovered_plans: Vec::new(),
             stored_minerals: 0,
             stored_energy: 0,
+            stored_plans: 0,
             collected_minerals: HashSet::new(),
             collected_energies: HashSet::new(),
+            collected_plans: HashSet::new(),
         }
     }
 }

@@ -98,6 +98,7 @@ impl<'a> Map<'a> {
                 let symbol = match robot.robot_type {
                     RobotType::Explorator => 'R',
                     RobotType::Collector => 'C',
+                    RobotType::Scientist => 'S',
                 };
 
                 let span = Span::styled(

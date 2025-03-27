@@ -4,6 +4,7 @@ use ratatui::style::Color;
 pub enum RobotType {
     Explorator,
     Collector,
+    Scientist,
 }
 
 impl RobotType {
@@ -11,6 +12,7 @@ impl RobotType {
         match self {
             RobotType::Explorator => 'R',
             RobotType::Collector => 'C',
+            RobotType::Scientist => 'S',
         }
     }
 
@@ -18,6 +20,7 @@ impl RobotType {
         match self {
             RobotType::Explorator => Color::Red,
             RobotType::Collector => Color::Blue,
+            RobotType::Scientist => Color::Green,
         }
     }
 }
