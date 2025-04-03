@@ -1,10 +1,10 @@
 use rand::rngs::StdRng;
 use rand::SeedableRng;
 
-use super::collector::Collector;
-use super::explorator::Explorator;
-use super::robot_type::RobotType;
-use super::scientist::Scientist;
+use super::{
+    collector::Collector, explorator::Explorator, robot_type::RobotModule, robot_type::RobotType,
+    scientist::Scientist,
+};
 use crate::map::{base::Base, TileType};
 
 #[derive(Debug)]
@@ -23,6 +23,7 @@ pub struct Robot {
     pub max_capacity: usize,
     pub rng: StdRng,
     pub previous_positions: Vec<(usize, usize)>,
+    pub modules: Vec<RobotModule>,
 }
 
 impl Robot {
@@ -49,7 +50,12 @@ impl Robot {
             max_capacity: 2,
             rng: StdRng::seed_from_u64(seed.into()),
             previous_positions: Vec::new(),
+            modules: Vec::new(),
         }
+    }
+
+    pub fn add_module(&mut self, module: RobotModule) {
+        self.modules.push(module);
     }
 
     pub fn move_robot(

@@ -1,4 +1,5 @@
 use super::robot::Robot;
+use super::robot_type::RobotModule;
 use crate::map::{base::Base, TileType};
 use crate::utils::debug_to_terminal::debug_to_terminal;
 
@@ -86,6 +87,22 @@ impl Collector {
                         robot.target = None;
                     }
                     return;
+                }
+            }
+        }
+
+        if robot.modules.contains(&RobotModule::Drill) {
+            for (nx, ny) in adjacent_positions.iter() {
+                if *nx < width && *ny < height {
+                    if grid[*ny][*nx] == TileType::Mountain {
+                        debug_to_terminal(&format!(
+                            "[Collector] \tForage à ({}, {}) pour découvrir des ressources enfouies",
+                            *nx, *ny
+                        ));
+                        grid[*ny][*nx] = TileType::Empty;
+                        robot.move_towards(*nx, *ny, grid, width, height);
+                        return;
+                    }
                 }
             }
         }

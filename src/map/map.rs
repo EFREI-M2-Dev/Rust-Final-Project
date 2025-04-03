@@ -1,6 +1,6 @@
 use super::base::Base;
 use super::tile_type::TileType;
-use crate::robot::{Robot, RobotType};
+use crate::robot::{robot_type::RobotModule, Robot, RobotType};
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
 
@@ -28,38 +28,23 @@ impl Map {
     }
 
     pub fn add_robot(&mut self, x: usize, y: usize, seed: u32) {
-        self.robots.push(Robot::new(
-            x,
-            y,
-            RobotType::Explorator,
-            self.width,
-            self.height,
-            seed,
-        ));
-        self.robots.push(Robot::new(
-            x,
-            y,
-            RobotType::Explorator,
-            self.width,
-            self.height,
-            seed + 1,
-        ));
-        self.robots.push(Robot::new(
-            x,
-            y,
-            RobotType::Collector,
-            self.width,
-            self.height,
-            seed,
-        ));
-        self.robots.push(Robot::new(
-            x,
-            y,
-            RobotType::Scientist,
-            self.width,
-            self.height,
-            seed,
-        ));
+        let robot_configs = vec![
+            (RobotType::Explorator, seed, None),
+            (RobotType::Explorator, seed + 1, None),
+            (RobotType::Collector, seed, None),
+            (RobotType::Scientist, seed, None),
+        ];
+
+        for (robot_type, seed, module) in robot_configs {
+            let mut robot = Robot::new(x, y, robot_type, self.width, self.height, seed);
+
+            if let Some(robot_module) = module {
+                robot.add_module(robot_module);
+            }
+
+            self.robots.push(robot);
+        }
+
         self.reveal_area(x, y);
     }
 

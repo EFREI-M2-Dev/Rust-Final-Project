@@ -1,4 +1,5 @@
 use super::robot::Robot;
+use super::robot_type::RobotModule;
 use crate::map::{base::Base, TileType};
 use crate::utils::debug_to_terminal::debug_to_terminal;
 
@@ -70,6 +71,13 @@ impl Scientist {
 
                     robot.inventory.push(grid[*ny][*nx]);
                     grid[*ny][*nx] = TileType::Empty;
+
+                    if robot.modules.contains(&RobotModule::Camera) {
+                        debug_to_terminal(&format!(
+                            "[Scientist] \tPrise de photo haute résolution à ({}, {})",
+                            *nx, *ny
+                        ));
+                    }
 
                     if robot.inventory.len() >= robot.max_capacity {
                         debug_to_terminal("[Scientist] \tInventaire plein ! Retour à la base...");

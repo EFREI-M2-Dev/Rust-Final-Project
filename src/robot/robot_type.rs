@@ -24,3 +24,10 @@ impl RobotType {
         }
     }
 }
+
+#[derive(Debug, PartialEq)]
+pub enum RobotModule {
+    Sensor,
+    Drill,
+    Camera,
+}

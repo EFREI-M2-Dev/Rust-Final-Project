@@ -1,4 +1,5 @@
 use super::robot::Robot;
+use super::robot_type::RobotModule;
 use crate::map::{base::Base, TileType};
 use crate::utils::debug_to_terminal::debug_to_terminal;
 
@@ -32,7 +33,12 @@ impl Explorator {
         let mut best_y = robot.y;
         let mut max_distance = 0;
 
-        let radius = 3;
+        let radius = if robot.modules.contains(&RobotModule::Sensor) {
+            5
+        } else {
+            3
+        };
+
         for dy in -radius..=radius {
             for dx in -radius..=radius {
                 let nx = robot.x as isize + dx;
