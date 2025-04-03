@@ -55,7 +55,7 @@ pub fn draw_map(frame: &mut Frame, map: &Map, base: &mut Base, _show_popup: bool
         })
         .collect();
 
-    let instructions = Line::from(" Tab: menu - q: exit ".red());
+    let instructions = Line::from(" Tab: Menu - q: Quitter ".red());
 
     let text = Paragraph::new(styled_map_str).block(
         Block::default()
