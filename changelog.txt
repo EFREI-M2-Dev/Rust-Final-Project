@@ -1,11 +1,5 @@
 Changelog
 
-Version 1.1.0
-
-- feat(scientist): add robot scientist
-- chore: add changelog
-- feat(ui): dynamic map size
-
 Version 1.0.0
 
 - refactor(map): add map.rs
@@ -17,11 +11,9 @@ Version 1.0.0
 - feat(debut_to_terminal): add method to debug in terminal
 - feat: add ui
 - fix(generate-map): use new function
-- fix(generate-map): use new function
 - feat(robot): add rayon for update
 - refactor(global): refactor global code to run project and re-establishment of ratatui
 - refactor(mod-map): remove hole
-- fix(robots-move): dont make same move twice
 - fix(robots-move): dont make same move twice
 - refactor(robot): add seed parameter
 - feat(robot): add discover radius
@@ -57,3 +49,18 @@ Version 1.0.0
 - feat: add map generator
 - feat(robots): implement robot types with task execution and battery management
 - feat(interface): base interface menu selection
+
+Version 1.1.0
+
+- feat(scientist): add robot scientist
+- chore: add changelog
+- feat(ui): dynamic map size
+
+Version 1.2.0
+
+- feat(robot): add modules
+- doc: add ADR
+- feat(robot): optimize explorator move
+- feat(menu-ui): display inventory base on menu
+- refactor(map): remove useless base
+- feat(inputs-action): display window when click on tab button
