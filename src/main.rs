@@ -11,10 +11,12 @@ use crate::map::modifier::{add_base, add_random_elements};
 use crate::map::TileType;
 use crate::ui::{draw_map, handle_input, setup_terminal, teardown_terminal};
 use crate::utils::config::Config;
+use crate::utils::debug_to_terminal::debug_to_terminal;
 use std::io;
 
 fn main() -> io::Result<()> {
     let mut show_popup = false;
+    let mut selected_index: usize = 0;
 
     let config =
         Config::from_file("config.toml").expect("Erreur de chargement du fichier de configuration");
@@ -50,12 +52,22 @@ fn main() -> io::Result<()> {
         map.update_robots(&mut base);
 
         terminal
-            .draw(|f| draw_map(f, &map, &mut base, show_popup))
+            .draw(|f| draw_map(f, &map, &mut base, show_popup, selected_index))
             .unwrap();
 
         match handle_input() {
             UserAction::Quit => break,
             UserAction::TogglePopup => show_popup = !show_popup,
+            UserAction::MoveUp => {
+                if selected_index > 0 {
+                    selected_index -= 1;
+                }
+            }
+            UserAction::MoveDown => {
+                if selected_index < 2 {
+                    selected_index += 1;
+                }
+            }
             UserAction::None => {}
         }
     }

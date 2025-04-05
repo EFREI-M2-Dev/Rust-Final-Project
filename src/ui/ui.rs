@@ -13,6 +13,8 @@ use std::io::{self, stdout, Stdout};
 pub enum UserAction {
     Quit,
     TogglePopup,
+    MoveUp,
+    MoveDown,
     None,
 }
 
@@ -31,7 +33,13 @@ pub fn teardown_terminal(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> i
     Ok(())
 }
 
-pub fn draw_map(frame: &mut Frame, map: &Map, base: &mut Base, _show_popup: bool) {
+pub fn draw_map(
+    frame: &mut Frame,
+    map: &Map,
+    base: &mut Base,
+    _show_popup: bool,
+    selected_index: usize,
+) {
     let styled_map_str: Vec<Line<'_>> = map
         .grid
         .iter()
@@ -69,7 +77,6 @@ pub fn draw_map(frame: &mut Frame, map: &Map, base: &mut Base, _show_popup: bool
 
     if _show_popup {
         let area = centered_rect(60, 20, frame.size());
-
         let inventory = base.get_inventory();
 
         debug_to_terminal(&format!(
@@ -77,20 +84,44 @@ pub fn draw_map(frame: &mut Frame, map: &Map, base: &mut Base, _show_popup: bool
             inventory
         ));
 
-        let block = Block::default()
-            .title(" Gestion de la base ")
-            .borders(Borders::ALL)
-            .style(Style::default().bg(Color::Black).fg(Color::White));
+        let chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Min(4), Constraint::Length(7)])
+            .split(area);
 
         let content = format!(
             "Minerals : {}\nEnergy : {}\nPlans: {}",
             inventory.0, inventory.1, inventory.2
         );
-
+        let block = Block::default()
+            .title(" Gestion de la base ")
+            .borders(Borders::ALL)
+            .style(Style::default().fg(Color::White));
         let text = Paragraph::new(content).block(block);
 
+        let options = vec!["Option 1", "Option 2", "Option 3"];
+        let items: Vec<ListItem> = options.iter().map(|opt| ListItem::new(*opt)).collect();
+
+        let menu = List::new(items)
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Ajouter un nouveau module "),
+            )
+            .highlight_style(
+                Style::default()
+                    .bg(Color::White)
+                    .fg(Color::Black)
+                    .add_modifier(Modifier::BOLD),
+            )
+            .highlight_symbol("➤ ");
+
+        let mut state = ListState::default();
+        state.select(Some(selected_index));
+
         frame.render_widget(Clear, area);
-        frame.render_widget(text, area);
+        frame.render_widget(text, chunks[0]);
+        frame.render_stateful_widget(menu, chunks[1], &mut state);
     }
 }
 
@@ -100,6 +131,8 @@ pub fn handle_input() -> UserAction {
             match key.code {
                 KeyCode::Char('q') => return UserAction::Quit,
                 KeyCode::Tab => return UserAction::TogglePopup,
+                KeyCode::Up => return UserAction::MoveUp,
+                KeyCode::Down => return UserAction::MoveDown,
                 _ => {}
             }
         }
