@@ -3,6 +3,7 @@ mod robot;
 mod ui;
 mod utils;
 
+use robot::RobotType;
 use ui::ui::UserAction;
 
 use crate::map::base::Base;
@@ -66,6 +67,31 @@ fn main() -> io::Result<()> {
             UserAction::MoveDown => {
                 if selected_index < 2 {
                     selected_index += 1;
+                }
+            }
+            UserAction::CreateSelectedRobot => {
+                let robot_type = match selected_index {
+                    0 => RobotType::Explorator,
+                    1 => RobotType::Collector,
+                    2 => RobotType::Scientist,
+                    _ => continue,
+                };
+
+                let (min, en, pl) = base.get_inventory();
+                debug_to_terminal(&format!(
+                    "Tentative de création de {:?} → Inventaire: minerais={}, énergie={}, plans={}",
+                    robot_type, min, en, pl
+                ));
+
+                match base.try_create_robot(robot_type.clone(), map.width, map.height, seed) {
+                    Ok(robot) => {
+                        map.robots.push(robot);
+                        debug_to_terminal(&format!("Robot {:?} créé avec succès !", robot_type));
+                        show_popup = false;
+                    }
+                    Err(msg) => {
+                        debug_to_terminal(&format!("Erreur : {}", msg));
+                    }
                 }
             }
             UserAction::None => {}

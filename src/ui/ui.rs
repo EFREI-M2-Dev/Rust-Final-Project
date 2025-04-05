@@ -1,7 +1,7 @@
-use crate::map::base::Base;
 use crate::map::Map;
 use crate::ui::centered_rect::centered_rect;
 use crate::utils::debug_to_terminal::debug_to_terminal;
+use crate::{map::base::Base, robot::RobotType};
 use crossterm::{
     event::{self, KeyCode},
     execute,
@@ -15,6 +15,7 @@ pub enum UserAction {
     TogglePopup,
     MoveUp,
     MoveDown,
+    CreateSelectedRobot,
     None,
 }
 
@@ -89,9 +90,28 @@ pub fn draw_map(
             .constraints([Constraint::Min(4), Constraint::Length(7)])
             .split(area);
 
+        let robot_counts = map.count_robots_by_type();
+
+        let robot_types = vec![
+            RobotType::Explorator,
+            RobotType::Collector,
+            RobotType::Scientist,
+        ];
+
+        let robot_info: Vec<String> = robot_types
+            .iter()
+            .map(|rt| {
+                let count = robot_counts.get(rt).unwrap_or(&0);
+                format!("{:?}: {} dispo(s)", rt, count)
+            })
+            .collect();
+
         let content = format!(
-            "Minerals : {}\nEnergy : {}\nPlans: {}",
-            inventory.0, inventory.1, inventory.2
+            "Minerals : {} | Energy : {} | Plans: {} \n{}",
+            inventory.0,
+            inventory.1,
+            inventory.2,
+            robot_info.join(" | ")
         );
         let block = Block::default()
             .title(" Gestion de la base ")
@@ -99,8 +119,24 @@ pub fn draw_map(
             .style(Style::default().fg(Color::White));
         let text = Paragraph::new(content).block(block);
 
-        let options = vec!["Option 1", "Option 2", "Option 3"];
-        let items: Vec<ListItem> = options.iter().map(|opt| ListItem::new(*opt)).collect();
+        let robot_types = vec![
+            RobotType::Explorator,
+            RobotType::Collector,
+            RobotType::Scientist,
+        ];
+
+        let options: Vec<String> = robot_types
+            .iter()
+            .map(|rt| {
+                let (m, e, p) = rt.cost();
+                format!("{:?} (M:{}, E:{}, P:{})", rt, m, e, p)
+            })
+            .collect();
+
+        let items: Vec<ListItem> = options
+            .iter()
+            .map(|opt| ListItem::new(opt.clone()))
+            .collect();
 
         let menu = List::new(items)
             .block(
@@ -133,6 +169,7 @@ pub fn handle_input() -> UserAction {
                 KeyCode::Tab => return UserAction::TogglePopup,
                 KeyCode::Up => return UserAction::MoveUp,
                 KeyCode::Down => return UserAction::MoveDown,
+                KeyCode::Enter => return UserAction::CreateSelectedRobot,
                 _ => {}
             }
         }

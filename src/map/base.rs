@@ -1,4 +1,8 @@
-use crate::{map::TileType, utils::debug_to_terminal::debug_to_terminal};
+use crate::{
+    map::TileType,
+    robot::{Robot, RobotType},
+    utils::debug_to_terminal::debug_to_terminal,
+};
 use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
@@ -160,6 +164,31 @@ impl Base {
 
     pub fn get_inventory(&mut self) -> (usize, usize, usize) {
         (self.stored_minerals, self.stored_energy, self.stored_plans)
+    }
+
+    pub fn try_create_robot(
+        &mut self,
+        robot_type: RobotType,
+        map_width: usize,
+        map_height: usize,
+        seed: u32,
+    ) -> Result<Robot, String> {
+        let (min_req, energy_req, plan_req) = robot_type.cost();
+
+        if self.stored_minerals < min_req
+            || self.stored_energy < energy_req
+            || self.stored_plans < plan_req
+        {
+            return Err("Ressources insuffisantes pour créer ce robot.".to_string());
+        }
+
+        self.stored_minerals -= min_req;
+        self.stored_energy -= energy_req;
+        self.stored_plans -= plan_req;
+
+        Ok(Robot::new(
+            self.x, self.y, robot_type, map_width, map_height, seed,
+        ))
     }
 
     pub fn new(x: usize, y: usize) -> Self {

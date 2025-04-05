@@ -1,6 +1,6 @@
 use ratatui::style::Color;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum RobotType {
     Explorator,
     Collector,
@@ -21,6 +21,14 @@ impl RobotType {
             RobotType::Explorator => Color::Red,
             RobotType::Collector => Color::Blue,
             RobotType::Scientist => Color::Green,
+        }
+    }
+
+    pub fn cost(&self) -> (usize, usize, usize) {
+        match self {
+            RobotType::Explorator => (5, 3, 0),
+            RobotType::Collector => (3, 5, 0),
+            RobotType::Scientist => (2, 2, 5),
         }
     }
 }

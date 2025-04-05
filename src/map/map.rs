@@ -87,6 +87,17 @@ impl Map {
             self.reveal_area(x, y);
         }
     }
+
+    pub fn count_robots_by_type(&self) -> std::collections::HashMap<RobotType, usize> {
+        let mut robot_counts = std::collections::HashMap::new();
+
+        for robot in &self.robots {
+            let count = robot_counts.entry(robot.robot_type.clone()).or_insert(0);
+            *count += 1;
+        }
+
+        robot_counts
+    }
 }
 
 pub type MapModifier = Box<dyn FnMut(&mut Map)>;
