@@ -78,10 +78,25 @@ impl Base {
             }
         }
 
-        for plan in plans {
+        for plan in &plans {
             if !self.discovered_plans.contains(&plan) {
-                self.discovered_plans.push(plan);
+                self.discovered_plans.push(*plan);
             }
+        }
+
+        // if plans.len() > 0 => send plans to earth in thread
+        let plans_count = plans.len();
+
+        if plans_count > 0 {
+            let plans_clone = plans.clone();
+            std::thread::spawn(move || {
+                // Simulate sending plans to Earth
+                std::thread::sleep(std::time::Duration::from_secs(2));
+                debug_to_terminal(&format!(
+                    "[Base] \tPlans scientifiques envoyés à la Terre ! ({})",
+                    plans_clone.len()
+                ));
+            });
         }
 
         debug_to_terminal(&format!(

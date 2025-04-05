@@ -28,7 +28,7 @@ impl RobotType {
         match self {
             RobotType::Explorator => (5, 3, 0),
             RobotType::Collector => (3, 5, 0),
-            RobotType::Scientist => (2, 2, 5),
+            RobotType::Scientist => (4, 4, 0),
         }
     }
 }

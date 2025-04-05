@@ -74,16 +74,26 @@ pub fn draw_map(
     );
 
     let area = frame.size();
-    frame.render_widget(text, area);
+
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(10), Constraint::Length(3)])
+        .split(area);
+
+    frame.render_widget(text, chunks[0]);
 
     if _show_popup {
+        /*  let progress = *base.research_progress.lock().unwrap() * 100.0;
+        let progress_bar = BarChart::default()
+            .block(Block::default().title("Progression de la Recherche").borders(Borders::ALL))
+            .data(&[("Recherche", progress as u64)])
+            .bar_style(Style::default().fg(Color::Green))
+            .value_style(Style::default().fg(Color::White));
+
+        frame.render_widget(progress_bar, chunks[1]); */
+
         let area = centered_rect(60, 20, frame.size());
         let inventory = base.get_inventory();
-
-        debug_to_terminal(&format!(
-            "[Base] \tInventaire actuel de la base : {:?}",
-            inventory
-        ));
 
         let chunks = Layout::default()
             .direction(Direction::Vertical)
