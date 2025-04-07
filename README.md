@@ -1,5 +1,9 @@
 # 🦀 Rust Projet Final
 
+## Description
+
+This project aims to develop a swarm of autonomous robots specialized in space exploration and astrobiological research. These robots will collaborate to conduct exploration and research missions on planet to collect data on geology, chemistry, and potential signs of life.
+
 ## Installation
 
 ```bash

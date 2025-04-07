@@ -1,6 +1,6 @@
 use super::base::Base;
 use super::tile_type::TileType;
-use crate::robot::{robot_type::RobotModule, Robot, RobotType};
+use crate::robot::{Robot, RobotType};
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
 

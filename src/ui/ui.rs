@@ -1,6 +1,5 @@
 use crate::map::Map;
 use crate::ui::centered_rect::centered_rect;
-use crate::utils::debug_to_terminal::debug_to_terminal;
 use crate::{map::base::Base, robot::RobotType};
 use crossterm::{
     event::{self, KeyCode},
@@ -73,11 +72,11 @@ pub fn draw_map(
             .borders(Borders::ALL),
     );
 
-    let area = frame.size();
+    let area = frame.area();
 
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Min(10), Constraint::Length(3)])
+        .constraints([Constraint::Min(0), Constraint::Length(0)])
         .split(area);
 
     frame.render_widget(text, chunks[0]);
@@ -92,7 +91,7 @@ pub fn draw_map(
 
         frame.render_widget(progress_bar, chunks[1]); */
 
-        let area = centered_rect(60, 20, frame.size());
+        let area = centered_rect(60, 20, frame.area());
         let inventory = base.get_inventory();
 
         let chunks = Layout::default()
