@@ -123,3 +123,35 @@ impl Robot {
         }
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::map::TileType;
+    use crate::robot::robot_type::{RobotType};
+
+    const WIDTH: usize = 10;
+    const HEIGHT: usize = 10;
+    const SEED: u32 = 42;
+
+    fn create_grid() -> Vec<Vec<TileType>> {
+        vec![vec![TileType::Empty; WIDTH]; HEIGHT]
+    }
+
+    // Test the creation of a Robot
+    #[test]
+    fn test_robot_creation_fields() {
+        let robot = Robot::new(2, 3, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        assert_eq!(robot.x, 2);
+        assert_eq!(robot.y, 3);
+        assert_eq!(robot.base, (2, 3));
+        assert_eq!(robot.visited_map.len(), HEIGHT);
+        assert_eq!(robot.visited_map[0].len(), WIDTH);
+        assert_eq!(robot.max_capacity, 2);
+        assert!(robot.modules.is_empty());
+        assert!(robot.inventory.is_empty());
+    }
+
+
+}
