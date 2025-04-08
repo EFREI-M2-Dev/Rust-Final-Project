@@ -222,3 +222,27 @@ impl Base {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::map::tile_type::TileType;
+
+    #[test]
+    fn test_base_new() {
+        let base = Base::new(5, 7);
+        assert_eq!(base.x, 5);
+        assert_eq!(base.y, 7);
+    }
+
+
+    #[test]
+    fn test_find_free_position_returns_none_when_no_empty() {
+        let grid = vec![
+            vec![TileType::Mineral, TileType::Mineral],
+            vec![TileType::Mineral, TileType::Mineral],
+        ];
+        let pos = Base::find_free_position(&grid);
+        assert_eq!(pos, None);
+    }
+}
