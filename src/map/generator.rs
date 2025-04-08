@@ -47,3 +47,26 @@ pub fn generate_map(
 
     map
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const WIDTH: usize = 20;
+    const HEIGHT: usize = 30;
+    const SEED: u32 = 100;
+
+    #[test]
+    fn test_generate_map_dimensions() {
+        let map = generate_map(WIDTH, HEIGHT, SEED, vec![]);
+        assert_eq!(map.grid.len(), HEIGHT);
+        assert_eq!(map.grid[0].len(), WIDTH);
+    }
+
+    #[test]
+    fn test_generate_map_reproducibility() {
+        let map1 = generate_map(WIDTH, HEIGHT, SEED, vec![]);
+        let map2 = generate_map(WIDTH, HEIGHT, SEED, vec![]);
+        assert_eq!(map1.grid, map2.grid);
+    }
+}
