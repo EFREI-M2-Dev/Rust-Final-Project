@@ -128,8 +128,6 @@ impl Robot {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::map::TileType;
-    use crate::robot::robot_type::{RobotType};
 
     const WIDTH: usize = 10;
     const HEIGHT: usize = 10;
@@ -153,5 +151,12 @@ mod tests {
         assert!(robot.inventory.is_empty());
     }
 
-
+    // Test the creation of a Robot with a specific type
+    #[test]
+    fn test_add_module() {
+        let mut robot = Robot::new(0, 0, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        robot.add_module(RobotModule::Sensor);
+        assert_eq!(robot.modules.len(), 1);
+        assert_eq!(robot.modules[0], RobotModule::Sensor);
+    }
 }
