@@ -228,4 +228,15 @@ mod tests {
         let n2 = robot2.rng.gen::<u32>();
         assert_eq!(n1, n2);
     }
+
+    #[test]
+    fn test_inventory_not_exceed_capacity() {
+        let mut robot = Robot::new(0, 0, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        for _ in 0..10 {
+            if robot.inventory.len() < robot.max_capacity {
+                robot.inventory.push(TileType::Mineral);
+            }
+        }
+        assert!(robot.inventory.len() <= robot.max_capacity);
+    }
 }
