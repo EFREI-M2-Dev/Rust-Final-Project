@@ -73,3 +73,18 @@ Version 1.3.0
 - feat(create-robot): can add robot from ui
 - feat(select-ui): done
 - fix(ui): typo
+
+Version 1.3.1
+
+- refactor: remove useless import
+- feat(tests): modifiers & map
+- feat(tests): generator map tests
+- fix(ui): bug on key tab pushed
+- feat(tests): base tests add
+- feat(tests): robot exceeed capacity
+- feat(tests): robot rng consistency test
+- feat(tests): robot type collector, explorator, scientists changes position move test
+- feat(tests): test robot update previous positions & move within bounds
+- feat(tests): test robot move
+- feat(tests): test robot add module
+- feat(tests): test robot creation
