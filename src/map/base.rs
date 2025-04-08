@@ -235,7 +235,6 @@ mod tests {
         assert_eq!(base.y, 7);
     }
 
-
     #[test]
     fn test_find_free_position_returns_none_when_no_empty() {
         let grid = vec![

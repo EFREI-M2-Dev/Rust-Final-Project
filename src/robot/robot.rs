@@ -124,11 +124,10 @@ impl Robot {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use rand::Rng;
     use super::*;
+    use rand::Rng;
 
     const WIDTH: usize = 10;
     const HEIGHT: usize = 10;
@@ -159,15 +158,16 @@ mod tests {
         assert_eq!(robot.modules[0], RobotModule::Sensor);
     }
 
-
     #[test]
     fn test_move_towards_decreases_distance() {
         let mut robot = Robot::new(5, 5, RobotType::Collector, WIDTH, HEIGHT, SEED);
         let mut grid = create_grid();
         let target = (7, 5);
-        let old_distance = ((robot.x as isize - target.0 as isize).abs() + (robot.y as isize - target.1 as isize).abs()) as usize;
+        let old_distance = ((robot.x as isize - target.0 as isize).abs()
+            + (robot.y as isize - target.1 as isize).abs()) as usize;
         robot.move_towards(target.0, target.1, &mut grid, WIDTH, HEIGHT);
-        let new_distance = ((robot.x as isize - target.0 as isize).abs() + (robot.y as isize - target.1 as isize).abs()) as usize;
+        let new_distance = ((robot.x as isize - target.0 as isize).abs()
+            + (robot.y as isize - target.1 as isize).abs()) as usize;
         assert!(new_distance < old_distance);
     }
 
@@ -218,7 +218,6 @@ mod tests {
         robot.move_robot(&mut grid, WIDTH, HEIGHT, &mut base);
         assert_ne!((robot.x, robot.y), old_pos);
     }
-
 
     #[test]
     fn test_rng_consistency() {

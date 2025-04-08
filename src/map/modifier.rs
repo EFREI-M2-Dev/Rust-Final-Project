@@ -51,7 +51,12 @@ mod tests {
         let modifier = add_random_elements(TileType::Energy, 0.0, SEED);
         let modifiers = vec![modifier];
         let map = generate_map(WIDTH, HEIGHT, SEED, modifiers);
-        let count = map.grid.iter().flatten().filter(|&&tile| tile == TileType::Energy).count();
+        let count = map
+            .grid
+            .iter()
+            .flatten()
+            .filter(|&&tile| tile == TileType::Energy)
+            .count();
         assert_eq!(count, 0);
     }
 
@@ -60,7 +65,12 @@ mod tests {
         let modifier = add_random_elements(TileType::Interest, 1.0, SEED);
         let modifiers = vec![modifier];
         let map = generate_map(WIDTH, HEIGHT, SEED, modifiers);
-        let count = map.grid.iter().flatten().filter(|&&tile| tile == TileType::Interest).count();
+        let count = map
+            .grid
+            .iter()
+            .flatten()
+            .filter(|&&tile| tile == TileType::Interest)
+            .count();
         assert_eq!(count, 301);
     }
 }

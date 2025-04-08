@@ -104,7 +104,6 @@ pub type MapModifier = Box<dyn FnMut(&mut Map)>;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::map::generator::generate_map;
 
     const WIDTH: usize = 10;
@@ -117,5 +116,4 @@ mod tests {
         assert_eq!(map.grid.len(), HEIGHT);
         assert_eq!(map.grid[0].len(), WIDTH);
     }
-
 }
