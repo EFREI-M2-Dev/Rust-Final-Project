@@ -127,6 +127,7 @@ impl Robot {
 
 #[cfg(test)]
 mod tests {
+    use rand::Rng;
     use super::*;
 
     const WIDTH: usize = 10;
@@ -216,5 +217,15 @@ mod tests {
         let old_pos = (robot.x, robot.y);
         robot.move_robot(&mut grid, WIDTH, HEIGHT, &mut base);
         assert_ne!((robot.x, robot.y), old_pos);
+    }
+
+
+    #[test]
+    fn test_rng_consistency() {
+        let mut robot1 = Robot::new(0, 0, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        let mut robot2 = Robot::new(0, 0, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        let n1 = robot1.rng.gen::<u32>();
+        let n2 = robot2.rng.gen::<u32>();
+        assert_eq!(n1, n2);
     }
 }
