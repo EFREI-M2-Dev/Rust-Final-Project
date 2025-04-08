@@ -173,13 +173,15 @@ pub fn draw_map(
 pub fn handle_input() -> UserAction {
     if event::poll(std::time::Duration::from_millis(100)).unwrap() {
         if let event::Event::Key(key) = event::read().unwrap() {
-            match key.code {
-                KeyCode::Char('q') => return UserAction::Quit,
-                KeyCode::Tab => return UserAction::TogglePopup,
-                KeyCode::Up => return UserAction::MoveUp,
-                KeyCode::Down => return UserAction::MoveDown,
-                KeyCode::Enter => return UserAction::CreateSelectedRobot,
-                _ => {}
+            if key.kind == event::KeyEventKind::Press {
+                match key.code {
+                    KeyCode::Char('q') => return UserAction::Quit,
+                    KeyCode::Tab => return UserAction::TogglePopup,
+                    KeyCode::Up => return UserAction::MoveUp,
+                    KeyCode::Down => return UserAction::MoveDown,
+                    KeyCode::Enter => return UserAction::CreateSelectedRobot,
+                    _ => {}
+                }
             }
         }
     }
