@@ -36,3 +36,31 @@ pub fn add_base(base: &Base) -> MapModifier {
         }
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::map::generator::generate_map;
+
+    const WIDTH: usize = 20;
+    const HEIGHT: usize = 20;
+    const SEED: u32 = 10;
+
+    #[test]
+    fn test_add_random_elements_zero_probability() {
+        let modifier = add_random_elements(TileType::Energy, 0.0, SEED);
+        let modifiers = vec![modifier];
+        let map = generate_map(WIDTH, HEIGHT, SEED, modifiers);
+        let count = map.grid.iter().flatten().filter(|&&tile| tile == TileType::Energy).count();
+        assert_eq!(count, 0);
+    }
+
+    #[test]
+    fn test_add_random_elements_full_probability() {
+        let modifier = add_random_elements(TileType::Interest, 1.0, SEED);
+        let modifiers = vec![modifier];
+        let map = generate_map(WIDTH, HEIGHT, SEED, modifiers);
+        let count = map.grid.iter().flatten().filter(|&&tile| tile == TileType::Interest).count();
+        assert_eq!(count, 301);
+    }
+}

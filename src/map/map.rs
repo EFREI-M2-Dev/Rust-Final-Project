@@ -101,3 +101,21 @@ impl Map {
 }
 
 pub type MapModifier = Box<dyn FnMut(&mut Map)>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::map::generator::generate_map;
+
+    const WIDTH: usize = 10;
+    const HEIGHT: usize = 10;
+    const SEED: u32 = 42;
+
+    #[test]
+    fn test_map_initialization() {
+        let map = generate_map(WIDTH, HEIGHT, SEED, vec![]);
+        assert_eq!(map.grid.len(), HEIGHT);
+        assert_eq!(map.grid[0].len(), WIDTH);
+    }
+
+}
