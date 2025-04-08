@@ -170,4 +170,21 @@ mod tests {
         assert!(new_distance < old_distance);
     }
 
+    #[test]
+    fn test_move_towards_updates_previous_positions() {
+        let mut robot = Robot::new(4, 4, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        let mut grid = create_grid();
+        let prev_len = robot.previous_positions.len();
+        robot.move_towards(6, 4, &mut grid, WIDTH, HEIGHT);
+        assert_eq!(robot.previous_positions.len(), prev_len + 1);
+    }
+
+    #[test]
+    fn test_move_towards_within_bounds() {
+        let mut robot = Robot::new(0, 0, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        let mut grid = create_grid();
+        robot.move_towards(WIDTH + 5, HEIGHT + 5, &mut grid, WIDTH, HEIGHT);
+        assert!(robot.x < WIDTH);
+        assert!(robot.y < HEIGHT);
+    }
 }
