@@ -137,7 +137,6 @@ mod tests {
         vec![vec![TileType::Empty; WIDTH]; HEIGHT]
     }
 
-    // Test the creation of a Robot
     #[test]
     fn test_robot_creation_fields() {
         let robot = Robot::new(2, 3, RobotType::Collector, WIDTH, HEIGHT, SEED);
@@ -151,7 +150,6 @@ mod tests {
         assert!(robot.inventory.is_empty());
     }
 
-    // Test the creation of a Robot with a specific type
     #[test]
     fn test_add_module() {
         let mut robot = Robot::new(0, 0, RobotType::Collector, WIDTH, HEIGHT, SEED);
@@ -159,4 +157,17 @@ mod tests {
         assert_eq!(robot.modules.len(), 1);
         assert_eq!(robot.modules[0], RobotModule::Sensor);
     }
+
+
+    #[test]
+    fn test_move_towards_decreases_distance() {
+        let mut robot = Robot::new(5, 5, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        let mut grid = create_grid();
+        let target = (7, 5);
+        let old_distance = ((robot.x as isize - target.0 as isize).abs() + (robot.y as isize - target.1 as isize).abs()) as usize;
+        robot.move_towards(target.0, target.1, &mut grid, WIDTH, HEIGHT);
+        let new_distance = ((robot.x as isize - target.0 as isize).abs() + (robot.y as isize - target.1 as isize).abs()) as usize;
+        assert!(new_distance < old_distance);
+    }
+
 }
