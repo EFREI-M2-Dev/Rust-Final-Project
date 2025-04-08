@@ -187,4 +187,34 @@ mod tests {
         assert!(robot.x < WIDTH);
         assert!(robot.y < HEIGHT);
     }
+
+    #[test]
+    fn test_move_robot_explorator_changes_position() {
+        let mut robot = Robot::new(1, 1, RobotType::Explorator, WIDTH, HEIGHT, SEED);
+        let mut grid = create_grid();
+        let mut base = Base::new(0, 0);
+        let old_pos = (robot.x, robot.y);
+        robot.move_robot(&mut grid, WIDTH, HEIGHT, &mut base);
+        assert_ne!((robot.x, robot.y), old_pos);
+    }
+
+    #[test]
+    fn test_move_robot_collector_changes_position() {
+        let mut robot = Robot::new(1, 1, RobotType::Collector, WIDTH, HEIGHT, SEED);
+        let mut grid = create_grid();
+        let mut base = Base::new(0, 0);
+        let old_pos = (robot.x, robot.y);
+        robot.move_robot(&mut grid, WIDTH, HEIGHT, &mut base);
+        assert_ne!((robot.x, robot.y), old_pos);
+    }
+
+    #[test]
+    fn test_move_robot_scientist_changes_position() {
+        let mut robot = Robot::new(1, 1, RobotType::Scientist, WIDTH, HEIGHT, SEED);
+        let mut grid = create_grid();
+        let mut base = Base::new(0, 0);
+        let old_pos = (robot.x, robot.y);
+        robot.move_robot(&mut grid, WIDTH, HEIGHT, &mut base);
+        assert_ne!((robot.x, robot.y), old_pos);
+    }
 }
